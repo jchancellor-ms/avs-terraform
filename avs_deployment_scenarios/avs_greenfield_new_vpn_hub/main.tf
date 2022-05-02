@@ -3,7 +3,6 @@ locals {
   #update naming convention with target naming convention if different
   private_cloud_rg_name = "${var.prefix}-PrivateCloud-${random_string.namestring.result}"
   network_rg_name       = "${var.prefix}-Network-${random_string.namestring.result}"
-  jumpbox_rg_name       = "${var.prefix}-Jumpbox-${random_string.namestring.result}"
 
   vnet_name = "${var.prefix}-VirtualNetwork-${random_string.namestring.result}"
 
@@ -14,13 +13,17 @@ locals {
   expressroute_pip_name     = "${var.prefix}-AVS-expressroute-gw-pip-${random_string.namestring.result}"
   expressroute_gateway_name = "${var.prefix}-AVS-expressroute-gw-${random_string.namestring.result}"
 
-  bastion_pip_name = "${var.prefix}-AVS-bastion-pip-${random_string.namestring.result}"
-  bastion_name     = "${var.prefix}-AVS-bastion-${random_string.namestring.result}"
+  vpn_pip_name_1   = "${var.prefix}-AVS-vpn-gw-pip-1-${random_string.namestring.result}"
+  vpn_pip_name_2   = "${var.prefix}-AVS-vpn-gw-pip-2-${random_string.namestring.result}"
+  vpn_gateway_name = "${var.prefix}-AVS-vpn-gw-${random_string.namestring.result}"
 
-  keyvault_name = "${var.prefix}-AVS-keyvault-${random_string.namestring.result}"
+  firewall_pip_name  = "${var.prefix}-AVS-firewall-pip-${random_string.namestring.result}"
+  firewall_name      = "${var.prefix}-AVS-firewall-${random_string.namestring.result}"
+  log_analytics_name = "${var.prefix}-AVS-log-analytics-${random_string.namestring.result}"
 
-  jumpbox_nic_name = "${var.prefix}-AVS-Jumpbox-Nic-${random_string.namestring.result}"
-  jumpbox_name     = "${var.prefix}-AVS-Jumpbox-${random_string.namestring.result}"
+  virtual_hub_name     = "${var.prefix}-AVS-virtual-hub-${random_string.namestring.result}"
+  virtual_hub_pip_name = "${var.prefix}-AVS-virtual-hub-pip-${random_string.namestring.result}"
+  route_server_name    = "${var.prefix}-AVS-virtual-route-server-${random_string.namestring.result}"
 }
 
 #create a random string for uniqueness during redeployments using the same values
@@ -43,24 +46,19 @@ resource "azurerm_resource_group" "greenfield_network" {
   location = var.region
 }
 
-#Create a resource group for the jumpbox and bastion
-resource "azurerm_resource_group" "greenfield_jumpbox" {
-  name     = local.jumpbox_rg_name
-  location = var.region
-}
 
 #Create a virtual network with gateway, bastion, and jumpbox subnets
 module "avs_virtual_network" {
-  source = "../../modules/avs_vnet_w_gateway_bastion_and_jumpbox"
+  source = "../../modules/avs_vnet_w_gateway_routeserver_and_azure_firewall"
 
-  vnet_name             = local.vnet_name
-  vnet_address_space    = var.vnet_address_space
-  rg_name               = azurerm_resource_group.greenfield_network.name
-  rg_location           = azurerm_resource_group.greenfield_network.location
-  gateway_subnet_prefix = var.gateway_subnet_prefix
-  bastion_subnet_prefix = var.bastion_subnet_prefix
-  jumpbox_subnet_prefix = var.jumpbox_subnet_prefix
-  tags                  = var.tags
+  vnet_name                  = local.vnet_name
+  vnet_address_space         = var.vnet_address_space
+  rg_name                    = azurerm_resource_group.greenfield_network.name
+  rg_location                = azurerm_resource_group.greenfield_network.location
+  gateway_subnet_prefix      = var.gateway_subnet_prefix
+  route_server_subnet_prefix = var.route_server_subnet_prefix
+  firewall_subnet_prefix     = var.firewall_subnet_prefix
+  tags                       = var.tags
 }
 
 #deploy the expressroute gateway in the gateway subnet 
@@ -73,6 +71,10 @@ module "avs_expressroute_gateway" {
   rg_name                   = azurerm_resource_group.greenfield_network.name
   rg_location               = azurerm_resource_group.greenfield_network.location
   gateway_subnet_id         = module.avs_virtual_network.gateway_subnet_id
+
+  depends_on = [
+    module.avs_vpn_gateway
+  ]
 }
 
 #deploy a private cloud with a single management cluster and connect to the expressroute gateway
@@ -91,46 +93,43 @@ module "avs_private_cloud" {
   tags                                = var.tags
 }
 
-#deploy the bastion host
-module "avs_bastion" {
-  source = "../../modules/avs_bastion_simple"
 
-  bastion_pip_name  = local.bastion_pip_name
-  bastion_name      = local.bastion_name
-  rg_name           = azurerm_resource_group.greenfield_jumpbox.name
-  rg_location       = azurerm_resource_group.greenfield_jumpbox.location
-  bastion_subnet_id = module.avs_virtual_network.bastion_subnet_id
-  tags              = var.tags
+#deploy a VPNGateway
+module "avs_vpn_gateway" {
+  source = "../../modules/avs_vpn_gateway"
+
+  vpn_pip_name_1    = local.vpn_pip_name_1
+  vpn_pip_name_2    = local.vpn_pip_name_2
+  vpn_gateway_name  = local.vpn_gateway_name
+  vpn_gateway_sku   = var.vpn_gateway_sku
+  rg_name           = azurerm_resource_group.greenfield_network.name
+  rg_location       = azurerm_resource_group.greenfield_network.location
+  gateway_subnet_id = module.avs_virtual_network.gateway_subnet_id
 }
 
-#deploy the key vault for the jump host
-data "azurerm_client_config" "current" {
+#deploy a routeserver
+module "avs_routeserver" {
+  source = "../../modules/avs_routeserver"
 
+  rg_name                = azurerm_resource_group.greenfield_network.name
+  rg_location            = azurerm_resource_group.greenfield_network.location
+  virtual_hub_name       = local.virtual_hub_name
+  virtual_hub_pip_name   = local.virtual_hub_pip_name
+  route_server_name      = local.route_server_name
+  route_server_subnet_id = module.avs_virtual_network.route_server_subnet_id
 }
 
-module "avs_keyvault_with_access_policy" {
-  source = "../../modules/avs_key_vault"
+#deploy azure firewall in the hub
+module "avs_azure_firewall" {
+  source = "../../modules/avs_azure_firewall_w_log_analytics"
 
-  #values to create the keyvault
-  rg_name                   = azurerm_resource_group.greenfield_jumpbox.name
-  rg_location               = azurerm_resource_group.greenfield_jumpbox.location
-  keyvault_name             = local.keyvault_name
-  azure_ad_tenant_id        = data.azurerm_client_config.current.tenant_id
-  deployment_user_object_id = data.azurerm_client_config.current.object_id
-  tags                      = var.tags
-}
+  rg_name            = azurerm_resource_group.greenfield_network.name
+  rg_location        = azurerm_resource_group.greenfield_network.location
+  firewall_sku_tier  = var.firewall_sku_tier
+  tags               = var.tags
+  firewall_pip_name  = local.firewall_pip_name
+  firewall_name      = local.firewall_name
+  firewall_subnet_id = module.avs_virtual_network.firewall_subnet_id
+  log_analytics_name = local.log_analytics_name
 
-#deploy the jumpbox host
-module "avs_jumpbox" {
-  source = "../../modules/avs_jumpbox"
-
-  jumpbox_nic_name  = local.jumpbox_nic_name
-  jumpbox_name      = local.jumpbox_name
-  jumpbox_sku       = var.jumpbox_sku
-  rg_name           = azurerm_resource_group.greenfield_jumpbox.name
-  rg_location       = azurerm_resource_group.greenfield_jumpbox.location
-  jumpbox_subnet_id = module.avs_virtual_network.jumpbox_subnet_id
-  admin_username    = var.admin_username
-  key_vault_id      = module.avs_keyvault_with_access_policy.keyvault_id
-  tags              = var.tags
 }

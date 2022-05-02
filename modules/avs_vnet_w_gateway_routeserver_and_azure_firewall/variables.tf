@@ -25,6 +25,11 @@ variable "route_server_subnet_prefix" {
   description = "A list of subnet prefix CIDR values used for the route_server subnet address space"
 }
 
+variable "firewall_subnet_prefix" {
+  type        = list(string)
+  description = "A list of subnet prefix CIDR values used for the firewall subnet address space"
+}
+
 variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"

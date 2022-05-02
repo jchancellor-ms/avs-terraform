@@ -14,7 +14,7 @@ output "sddc_vcsa_endpoint" {
   value = azurerm_vmware_private_cloud.privatecloud.vcsa_endpoint
 }
 
-output "sddc_nsxt_endpoint" {
+output "sddc_nsxt_manager_endpoint" {
   value = azurerm_vmware_private_cloud.privatecloud.nsxt_manager_endpoint
 }
 
