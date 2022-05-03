@@ -6,7 +6,6 @@ terraform {
   }
 }
 
-
 resource "azurerm_virtual_hub" "virtual_hub" {
   name                = var.virtual_hub_name
   resource_group_name = var.rg_name

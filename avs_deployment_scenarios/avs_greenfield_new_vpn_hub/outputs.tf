@@ -53,3 +53,19 @@ output "vpn_gateway_pip_1" {
 output "vpn_gateway_pip_2" {
   value = module.avs_vpn_gateway.vpn_gateway_pip_2
 }
+
+output "vpn_gateway_bgp_peering_addresses" {
+  value = module.avs_vpn_gateway.vpn_gateway_bgp_peering_addresses
+}
+
+output "vpn_gateway_asn" {
+  value = module.avs_vpn_gateway.vpn_gateway_asn
+}
+
+output "network_resource_group_name" {
+  value = azurerm_resource_group.greenfield_network.name
+}
+
+output "network_resource_group_location" {
+  value = azurerm_resource_group.greenfield_network.location
+}
