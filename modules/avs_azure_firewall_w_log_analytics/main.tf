@@ -15,7 +15,6 @@ resource "azurerm_public_ip" "firewall_pip" {
   name                = var.firewall_pip_name
   location            = var.rg_location
   resource_group_name = var.rg_name
-  availability_zone   = "No-Zone"
 
   allocation_method = "Static"
   sku               = "Standard"
