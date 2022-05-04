@@ -28,7 +28,7 @@ resource "azurerm_virtual_network_gateway" "gateway" {
   enable_bgp    = true
 
   bgp_settings {
-    asn = 65515
+    asn = var.asn
   }
 
 

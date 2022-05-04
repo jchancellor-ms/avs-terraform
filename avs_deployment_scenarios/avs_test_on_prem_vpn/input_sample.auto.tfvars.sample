@@ -12,6 +12,7 @@ jumpbox_subnet_prefix = ["10.2.3.0/24"]
 vpn_gateway_sku = "VpnGw2"
 jumpbox_sku              = "Standard_D2as_v4"
 admin_username           = "azureuser"
+asn                      = 65516
 
 tags = {
 environment = "Dev"

@@ -34,6 +34,12 @@ variable "vpn_gateway_sku" {
   default     = "VpnGw2"
 }
 
+variable "asn" {
+  type        = number
+  description = "The ASN for bgp on the VPN gateway"
+  default     = "65516"
+}
+
 variable "jumpbox_sku" {
   type        = string
   description = "The sku for the jumpbox vm"

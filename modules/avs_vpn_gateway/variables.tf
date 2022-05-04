@@ -18,6 +18,12 @@ variable "vpn_gateway_sku" {
   default     = "VpnGw2"
 }
 
+variable "asn" {
+  type        = number
+  description = "The ASN for bgp on the VPN gateway"
+  default     = "65515"
+}
+
 variable "rg_name" {
   type        = string
   description = "Resource Group Name where the expressroute gateway and the associated public ip are being deployed"

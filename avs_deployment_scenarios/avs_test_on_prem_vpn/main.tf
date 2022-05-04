@@ -4,15 +4,16 @@ locals {
   vnet_name            = "${var.prefix}-on-prem-virtualNetwork-${random_string.namestring.result}"
 
   vpn_pip_name_1   = "${var.prefix}-on-prem-vpn-gw-pip-1-${random_string.namestring.result}"
+  vpn_pip_name_2   = "${var.prefix}-on-prem-vpn-gw-pip-2-${random_string.namestring.result}"
   vpn_gateway_name = "${var.prefix}-on-prem-vpn-gw-${random_string.namestring.result}"
 
   bastion_pip_name = "${var.prefix}-on-prem-bastion-pip-${random_string.namestring.result}"
   bastion_name     = "${var.prefix}-on-prem-bastion-${random_string.namestring.result}"
 
-  keyvault_name = "${var.prefix}-on-prem-keyvault-${random_string.namestring.result}"
+  keyvault_name = "${var.prefix}-op-kv-${random_string.namestring.result}"
 
-  jumpbox_nic_name = "${var.prefix}-on-prem-Jumpbox-Nic-${random_string.namestring.result}"
-  jumpbox_name     = "${var.prefix}-on-prem-Jumpbox-${random_string.namestring.result}"
+  jumpbox_nic_name = "${var.prefix}-op-Jumpbox-Nic-${random_string.namestring.result}"
+  jumpbox_name     = "${var.prefix}-jump"
 }
 
 resource "random_string" "namestring" {
@@ -43,11 +44,13 @@ module "on_prem_virtual_network" {
 }
 
 module "on_prem_vpn_gateway" {
-  source = "../../modules/on_prem_vpn_gateway"
+  source = "../../modules/avs_vpn_gateway"
 
   vpn_pip_name_1    = local.vpn_pip_name_1
+  vpn_pip_name_2    = local.vpn_pip_name_2
   vpn_gateway_name  = local.vpn_gateway_name
   vpn_gateway_sku   = var.vpn_gateway_sku
+  asn               = var.asn
   rg_name           = azurerm_resource_group.test_on_prem.name
   rg_location       = azurerm_resource_group.test_on_prem.location
   gateway_subnet_id = module.on_prem_virtual_network.gateway_subnet_id

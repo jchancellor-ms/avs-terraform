@@ -102,6 +102,7 @@ module "avs_vpn_gateway" {
   vpn_pip_name_2    = local.vpn_pip_name_2
   vpn_gateway_name  = local.vpn_gateway_name
   vpn_gateway_sku   = var.vpn_gateway_sku
+  asn               = var.asn
   rg_name           = azurerm_resource_group.greenfield_network.name
   rg_location       = azurerm_resource_group.greenfield_network.location
   gateway_subnet_id = module.avs_virtual_network.gateway_subnet_id

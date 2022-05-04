@@ -57,6 +57,12 @@ variable "vpn_gateway_sku" {
   default     = "VpnGw2"
 }
 
+variable "asn" {
+  type        = number
+  description = "The ASN for bgp on the VPN gateway"
+  default     = "65515"
+}
+
 variable "firewall_sku_tier" {
   type        = string
   description = "Firewall Sku Tier - allowed values are Standard and Premium"
