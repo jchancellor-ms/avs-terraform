@@ -136,7 +136,6 @@ module "avs_azure_firewall" {
   firewall_name      = local.firewall_name
   firewall_subnet_id = module.avs_virtual_network.firewall_subnet_id
   log_analytics_name = local.log_analytics_name
-
 }
 
 module "avs_service_health" {

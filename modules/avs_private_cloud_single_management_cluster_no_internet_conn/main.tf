@@ -56,6 +56,7 @@ resource "azurerm_virtual_network_gateway_connection" "avs" {
   name                = var.express_route_connection_name
   location            = var.rg_location
   resource_group_name = var.rg_name
+  enable_bgp          = true
 
   type                       = "ExpressRoute"
   virtual_network_gateway_id = var.express_route_gateway_id
