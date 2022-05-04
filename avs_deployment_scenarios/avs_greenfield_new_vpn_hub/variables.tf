@@ -73,6 +73,11 @@ variable "firewall_sku_tier" {
   }
 }
 
+variable "email_addresses" {
+  type        = list(string)
+  description = "A list of email addresses where service health alerts will be sent"
+}
+
 variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"

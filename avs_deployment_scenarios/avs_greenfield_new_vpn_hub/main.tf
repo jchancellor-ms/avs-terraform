@@ -24,6 +24,10 @@ locals {
   virtual_hub_name     = "${var.prefix}-AVS-virtual-hub-${random_string.namestring.result}"
   virtual_hub_pip_name = "${var.prefix}-AVS-virtual-hub-pip-${random_string.namestring.result}"
   route_server_name    = "${var.prefix}-AVS-virtual-route-server-${random_string.namestring.result}"
+
+  action_group_name         = "${var.prefix}-AVS-action-group-${random_string.namestring.result}"
+  action_group_shortname    = "avs-sddc-sh"
+  service_health_alert_name = "${var.prefix}-AVS-service-health-alert-${random_string.namestring.result}"
 }
 
 #create a random string for uniqueness during redeployments using the same values
@@ -133,4 +137,15 @@ module "avs_azure_firewall" {
   firewall_subnet_id = module.avs_virtual_network.firewall_subnet_id
   log_analytics_name = local.log_analytics_name
 
+}
+
+module "avs_service_health" {
+  source = "../../modules/avs_service_health"
+
+  rg_name                       = azurerm_resource_group.greenfield_privatecloud.name
+  action_group_name             = local.action_group_name
+  action_group_shortname        = local.action_group_shortname
+  email_addresses               = var.email_addresses
+  service_health_alert_name     = local.service_health_alert_name
+  service_health_alert_scope_id = azurerm_resource_group.greenfield_privatecloud.id
 }
