@@ -35,9 +35,9 @@ resource "azurerm_vmware_private_cloud" "privatecloud" {
   nsxt_password               = random_password.nsxt.result
   vcenter_password            = random_password.vcenter.result
 
-  timeouts {
-    create = "10h"
-  }
+  #timeouts {
+  #  create = "10h"
+  #}
 
   lifecycle {
     ignore_changes = [

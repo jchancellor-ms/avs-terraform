@@ -16,6 +16,7 @@ avs_network_cidr          = "192.168.0.0/22"
 
 firewall_sku_tier            = "Standard"
 hub_firewall_public_ip_count = 1
+email_addresses          = ["test1@test.com","test2@test.com"]
 
 
 tags = {

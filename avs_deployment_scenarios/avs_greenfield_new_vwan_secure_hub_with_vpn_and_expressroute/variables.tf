@@ -72,3 +72,8 @@ variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"
 }
+
+variable "email_addresses" {
+  type        = list(string)
+  description = "A list of email addresses where service health alerts will be sent"
+}

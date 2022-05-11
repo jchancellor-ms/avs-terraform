@@ -4,7 +4,7 @@ locals {
   private_cloud_rg_name = "${var.prefix}-PrivateCloud-${random_string.namestring.result}"
   network_rg_name       = "${var.prefix}-Network-${random_string.namestring.result}"
 
-  sddc_name                           = "${var.prefix}-SDDC-${random_string.namestring.result}"
+  sddc_name                           = "${var.prefix}-AVS-SDDC-${random_string.namestring.result}"
   expressroute_authorization_key_name = "${var.prefix}-AVS-ExpressrouteAuthKey-${random_string.namestring.result}"
   express_route_connection_name       = "${var.prefix}-AVS-ExpressrouteConnection-${random_string.namestring.result}"
 
@@ -17,9 +17,9 @@ locals {
   vwan_firewall_name        = "${var.prefix}-AVS-vwan-firewall-${random_string.namestring.result}"
   vwan_log_analytics_name   = "${var.prefix}-AVS-vwan-firewall-log-analytics-${random_string.namestring.result}"
 
-  #action_group_name         = "${var.prefix}-AVS-action-group-${random_string.namestring.result}"
-  #action_group_shortname    = "avs-sddc-sh"
-  #service_health_alert_name = "${var.prefix}-AVS-service-health-alert-${random_string.namestring.result}"
+  action_group_name         = "${var.prefix}-AVS-action-group-${random_string.namestring.result}"
+  action_group_shortname    = "avs-sddc-sh1"
+  service_health_alert_name = "${var.prefix}-AVS-service-health-alert-${random_string.namestring.result}"
 }
 
 #create a random string for uniqueness during redeployments using the same values
@@ -97,4 +97,13 @@ module "avs_vwan_azure_firewall_w_policy_and_log_analytics" {
   tags                      = var.tags
 }
 
+module "avs_service_health" {
+  source = "../../modules/avs_service_health"
 
+  rg_name                       = azurerm_resource_group.greenfield_privatecloud.name
+  action_group_name             = local.action_group_name
+  action_group_shortname        = local.action_group_shortname
+  email_addresses               = var.email_addresses
+  service_health_alert_name     = local.service_health_alert_name
+  service_health_alert_scope_id = azurerm_resource_group.greenfield_privatecloud.id
+}
