@@ -27,3 +27,8 @@ variable "service_health_alert_scope_id" {
   type        = string
   description = "The full azure resource id of the scope where this service health alert will notify on. Initially set to the resource group of the AVS private cloud"
 }
+
+variable "private_cloud_id" {
+  type        = string
+  description = "The Azure resource id for the AVS private cloud resource"
+}

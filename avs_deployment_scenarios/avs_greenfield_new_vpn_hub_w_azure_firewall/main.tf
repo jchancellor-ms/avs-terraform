@@ -147,4 +147,5 @@ module "avs_service_health" {
   email_addresses               = var.email_addresses
   service_health_alert_name     = local.service_health_alert_name
   service_health_alert_scope_id = azurerm_resource_group.greenfield_privatecloud.id
+  private_cloud_id              = module.avs_private_cloud.sddc_id
 }
