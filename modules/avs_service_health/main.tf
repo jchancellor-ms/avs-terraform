@@ -26,8 +26,6 @@ resource "azurerm_monitor_activity_log_alert" "avs_rg_service_health" {
     }
   }
 
-
-
   action {
     action_group_id = azurerm_monitor_action_group.avs_service_health.id
   }
