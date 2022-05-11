@@ -4,27 +4,18 @@ locals {
   private_cloud_rg_name = "${var.prefix}-PrivateCloud-${random_string.namestring.result}"
   network_rg_name       = "${var.prefix}-Network-${random_string.namestring.result}"
 
-  #vnet_name = "${var.prefix}-VirtualNetwork-${random_string.namestring.result}"
   sddc_name                           = "${var.prefix}-SDDC-${random_string.namestring.result}"
   expressroute_authorization_key_name = "${var.prefix}-AVS-ExpressrouteAuthKey-${random_string.namestring.result}"
   express_route_connection_name       = "${var.prefix}-AVS-ExpressrouteConnection-${random_string.namestring.result}"
 
-  #expressroute_pip_name     = "${var.prefix}-AVS-expressroute-gw-pip-${random_string.namestring.result}"
   express_route_gateway_name = "${var.prefix}-AVS-express-route-gw-${random_string.namestring.result}"
+  vpn_gateway_name           = "${var.prefix}-AVS-vpn-gw-${random_string.namestring.result}"
 
-  #vpn_pip_name_1   = "${var.prefix}-AVS-vpn-gw-pip-1-${random_string.namestring.result}"
-  #vpn_pip_name_2   = "${var.prefix}-AVS-vpn-gw-pip-2-${random_string.namestring.result}"
-  vpn_gateway_name = "${var.prefix}-AVS-vpn-gw-${random_string.namestring.result}"
-
-  #firewall_pip_name  = "${var.prefix}-AVS-firewall-pip-${random_string.namestring.result}"
-  #firewall_name      = "${var.prefix}-AVS-firewall-${random_string.namestring.result}"
-  #log_analytics_name = "${var.prefix}-AVS-log-analytics-${random_string.namestring.result}"
-
-  vwan_name = (var.vwan_already_exists ? var.vwan_name : "${var.prefix}-AVS-vwan-${random_string.namestring.result}")
-
-  vwan_hub_name = "${var.prefix}-AVS-vwab-hub-${random_string.namestring.result}"
-  #virtual_hub_pip_name = "${var.prefix}-AVS-virtual-hub-pip-${random_string.namestring.result}"
-  #route_server_name    = "${var.prefix}-AVS-virtual-route-server-${random_string.namestring.result}"
+  vwan_name                 = (var.vwan_already_exists ? var.vwan_name : "${var.prefix}-AVS-vwan-${random_string.namestring.result}")
+  vwan_hub_name             = "${var.prefix}-AVS-vwan-hub-${random_string.namestring.result}"
+  vwan_firewall_policy_name = "${var.prefix}-AVS-vwan-firewall-policy-${random_string.namestring.result}"
+  vwan_firewall_name        = "${var.prefix}-AVS-vwan-firewall-${random_string.namestring.result}"
+  vwan_log_analytics_name   = "${var.prefix}-AVS-vwan-firewall-log-analytics-${random_string.namestring.result}"
 
   #action_group_name         = "${var.prefix}-AVS-action-group-${random_string.namestring.result}"
   #action_group_shortname    = "avs-sddc-sh"
@@ -91,3 +82,19 @@ module "avs_private_cloud" {
   express_route_connection_name       = local.express_route_connection_name
   tags                                = var.tags
 }
+
+module "avs_vwan_azure_firewall_w_policy_and_log_analytics" {
+  source = "../../modules/avs_vwan_azure_firewall_w_policy_and_log_analytics"
+
+  rg_name                   = azurerm_resource_group.greenfield_network.name
+  rg_location               = azurerm_resource_group.greenfield_network.location
+  firewall_sku_tier         = var.firewall_sku_tier
+  firewall_name             = local.vwan_firewall_name
+  log_analytics_name        = local.vwan_log_analytics_name
+  vwan_firewall_policy_name = local.vwan_firewall_policy_name
+  virtual_hub_id            = module.avs_vwan_hub_with_vpn_and_express_route_gateways.vwan_hub_id
+  public_ip_count           = var.hub_firewall_public_ip_count
+  tags                      = var.tags
+}
+
+

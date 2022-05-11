@@ -53,6 +53,21 @@ variable "avs_network_cidr" {
   description = "The full /22 network CIDR range summary for the private cloud managed components"
 }
 
+variable "firewall_sku_tier" {
+  type        = string
+  description = "Firewall Sku Tier - allowed values are Standard and Premium"
+  default     = "Standard"
+  validation {
+    condition     = contains(["Standard", "Premium"], var.firewall_sku_tier)
+    error_message = "Value must be Standard or Premium."
+  }
+}
+
+variable "hub_firewall_public_ip_count" {
+  type        = number
+  description = "The number of public ip addresses to provision on this firewall"
+}
+
 variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"
