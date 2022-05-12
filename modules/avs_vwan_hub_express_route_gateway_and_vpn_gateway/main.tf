@@ -25,3 +25,10 @@ resource "azurerm_vpn_gateway" "vwan_vpn_gateway" {
   virtual_hub_id      = azurerm_virtual_hub.vwan_hub.id
   scale_unit          = var.vpn_scale_units
 }
+
+resource "azurerm_express_route_connection" "avs_private_cloud_connection" {
+  name                             = var.express_route_connection_name
+  express_route_gateway_id         = azurerm_express_route_gateway.vwan_express_route_gateway.id
+  express_route_circuit_peering_id = var.express_route_circuit_peering_id
+  authorization_key                = var.express_route_authorization_key
+}

@@ -55,16 +55,19 @@ module "avs_vwan" {
 module "avs_vwan_hub_with_vpn_and_express_route_gateways" {
   source = "../../modules/avs_vwan_hub_express_route_gateway_and_vpn_gateway"
 
-  rg_name                    = azurerm_resource_group.greenfield_network.name
-  rg_location                = azurerm_resource_group.greenfield_network.location
-  vwan_id                    = module.avs_vwan.vwan_id
-  vwan_hub_name              = local.vwan_hub_name
-  vwan_hub_address_prefix    = var.vwan_hub_address_prefix
-  express_route_gateway_name = local.express_route_gateway_name
-  express_route_scale_units  = var.express_route_scale_units
-  vpn_gateway_name           = local.vpn_gateway_name
-  vpn_scale_units            = var.vpn_scale_units
-  tags                       = var.tags
+  rg_name                          = azurerm_resource_group.greenfield_network.name
+  rg_location                      = azurerm_resource_group.greenfield_network.location
+  vwan_id                          = module.avs_vwan.vwan_id
+  vwan_hub_name                    = local.vwan_hub_name
+  vwan_hub_address_prefix          = var.vwan_hub_address_prefix
+  express_route_gateway_name       = local.express_route_gateway_name
+  express_route_connection_name    = local.express_route_connection_name
+  express_route_circuit_peering_id = module.avs_private_cloud.sddc_express_route_private_peering_id
+  express_route_authorization_key  = module.avs_private_cloud.sddc_express_route_authorization_key
+  express_route_scale_units        = var.express_route_scale_units
+  vpn_gateway_name                 = local.vpn_gateway_name
+  vpn_scale_units                  = var.vpn_scale_units
+  tags                             = var.tags
 }
 
 #deploy the private cloud
@@ -78,8 +81,6 @@ module "avs_private_cloud" {
   rg_location                         = azurerm_resource_group.greenfield_privatecloud.location
   avs_network_cidr                    = var.avs_network_cidr
   expressroute_authorization_key_name = local.expressroute_authorization_key_name
-  express_route_gateway_id            = module.avs_vwan_hub_with_vpn_and_express_route_gateways.express_route_gateway_id
-  express_route_connection_name       = local.express_route_connection_name
   tags                                = var.tags
 }
 

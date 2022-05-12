@@ -29,6 +29,21 @@ variable "express_route_gateway_name" {
   description = "The azure resource name for the express route gateway in the vwan hub"
 }
 
+variable "express_route_connection_name" {
+  type        = string
+  description = "The azure resource name for the express route connection to the AVS private cloud"
+}
+
+variable "express_route_circuit_peering_id" {
+  type        = string
+  description = "The peering id for the AVS Private Cloud Express Route circuit"
+}
+
+variable "express_route_authorization_key" {
+  type        = string
+  description = "The authorization key for connecting the AVS private cloud express route circuit to the gateway"
+}
+
 variable "express_route_scale_units" {
   type        = number
   description = "the number of scale units to assign to the Express route gateway.  Each unit represents 2GB.  Value must be in range 1-10"

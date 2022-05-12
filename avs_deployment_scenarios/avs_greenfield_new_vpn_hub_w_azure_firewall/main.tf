@@ -69,12 +69,15 @@ module "avs_virtual_network" {
 module "avs_expressroute_gateway" {
   source = "../../modules/avs_expressroute_gateway"
 
-  expressroute_pip_name     = local.expressroute_pip_name
-  expressroute_gateway_name = local.expressroute_gateway_name
-  expressroute_gateway_sku  = var.expressroute_gateway_sku
-  rg_name                   = azurerm_resource_group.greenfield_network.name
-  rg_location               = azurerm_resource_group.greenfield_network.location
-  gateway_subnet_id         = module.avs_virtual_network.gateway_subnet_id
+  expressroute_pip_name           = local.expressroute_pip_name
+  expressroute_gateway_name       = local.expressroute_gateway_name
+  expressroute_gateway_sku        = var.expressroute_gateway_sku
+  rg_name                         = azurerm_resource_group.greenfield_network.name
+  rg_location                     = azurerm_resource_group.greenfield_network.location
+  gateway_subnet_id               = module.avs_virtual_network.gateway_subnet_id
+  express_route_connection_name   = local.express_route_connection_name
+  express_route_id                = module.avs_private_cloud.sddc_express_route_id
+  express_route_authorization_key = module.avs_private_cloud.sddc_express_route_authorization_key
 
   depends_on = [
     module.avs_vpn_gateway
@@ -92,8 +95,6 @@ module "avs_private_cloud" {
   rg_location                         = azurerm_resource_group.greenfield_privatecloud.location
   avs_network_cidr                    = var.avs_network_cidr
   expressroute_authorization_key_name = local.expressroute_authorization_key_name
-  express_route_gateway_id            = module.avs_expressroute_gateway.expressroute_gateway_id
-  express_route_connection_name       = local.express_route_connection_name
   tags                                = var.tags
 }
 

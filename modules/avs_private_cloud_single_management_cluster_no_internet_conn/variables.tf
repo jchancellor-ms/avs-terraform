@@ -35,16 +35,6 @@ variable "expressroute_authorization_key_name" {
   description = "The name to use for the expressRoute authorization key"
 }
 
-variable "express_route_gateway_id" {
-  type        = string
-  description = "Azure resource id for the expressRoute gateway where the avs connection will be terminated"
-}
-
-variable "express_route_connection_name" {
-  type        = string
-  description = "The name to use for the connection to the expressRoute gateway where the AVS connection will be terminated"
-}
-
 variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"
