@@ -5,14 +5,14 @@
 prefix                = "SDDC1"
 region                = "Southeast Asia"
 
-vwan_name                 = ""
-vwan_already_exists       = false
-vwan_hub_address_prefix   = "10.100.0.0/23"
-express_route_scale_units = 1
-vpn_scale_units           = 1
-sddc_sku                  = "av36"
-management_cluster_size   = 3
-avs_network_cidr          = "192.168.0.0/22"
+vwan_name                  = ""
+vwan_already_exists        = false
+vwan_hub_address_prefix    = "10.100.0.0/23"
+express_route_scale_units  = 1
+vpn_scale_units            = 1
+sddc_sku                   = "av36"
+management_cluster_size    = 3
+avs_network_cidr           = "192.168.0.0/22"
 
 firewall_sku_tier            = "Standard"
 hub_firewall_public_ip_count = 1

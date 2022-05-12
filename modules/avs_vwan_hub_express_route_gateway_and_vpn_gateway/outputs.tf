@@ -11,3 +11,7 @@ output "express_route_gateway_id" {
 output "vpn_gateway_id" {
   value = azurerm_vpn_gateway.vwan_vpn_gateway.id
 }
+
+output "vpn_bgp_settings" {
+  value = azurerm_vpn_gateway.vwan_vpn_gateway.bgp_settings
+}
