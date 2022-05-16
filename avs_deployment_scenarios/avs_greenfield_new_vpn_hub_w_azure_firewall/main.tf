@@ -50,7 +50,6 @@ resource "azurerm_resource_group" "greenfield_network" {
   location = var.region
 }
 
-
 #Create a virtual network with gateway, bastion, and jumpbox subnets
 module "avs_virtual_network" {
   source = "../../modules/avs_vnet_w_gateway_routeserver_and_azure_firewall"

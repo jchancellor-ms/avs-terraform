@@ -55,19 +55,21 @@ module "avs_vwan" {
 module "avs_vwan_hub_with_vpn_and_express_route_gateways" {
   source = "../../modules/avs_vwan_hub_express_route_gateway_and_vpn_gateway"
 
-  rg_name                          = azurerm_resource_group.greenfield_network.name
-  rg_location                      = azurerm_resource_group.greenfield_network.location
-  vwan_id                          = module.avs_vwan.vwan_id
-  vwan_hub_name                    = local.vwan_hub_name
-  vwan_hub_address_prefix          = var.vwan_hub_address_prefix
-  express_route_gateway_name       = local.express_route_gateway_name
-  express_route_connection_name    = local.express_route_connection_name
-  express_route_circuit_peering_id = module.avs_private_cloud.sddc_express_route_private_peering_id
-  express_route_authorization_key  = module.avs_private_cloud.sddc_express_route_authorization_key
-  express_route_scale_units        = var.express_route_scale_units
-  vpn_gateway_name                 = local.vpn_gateway_name
-  vpn_scale_units                  = var.vpn_scale_units
-  tags                             = var.tags
+  rg_name                             = azurerm_resource_group.greenfield_network.name
+  rg_location                         = azurerm_resource_group.greenfield_network.location
+  vwan_id                             = module.avs_vwan.vwan_id
+  vwan_hub_name                       = local.vwan_hub_name
+  vwan_hub_address_prefix             = var.vwan_hub_address_prefix
+  express_route_gateway_name          = local.express_route_gateway_name
+  express_route_connection_name       = local.express_route_connection_name
+  express_route_circuit_peering_id    = module.avs_private_cloud.sddc_express_route_private_peering_id
+  express_route_authorization_key     = module.avs_private_cloud.sddc_express_route_authorization_key
+  express_route_scale_units           = var.express_route_scale_units
+  azure_firewall_id                   = module.avs_vwan_azure_firewall_w_policy_and_log_analytics.firewall_id
+  express_route_internet_through_azfw = var.express_route_internet_through_azfw
+  vpn_gateway_name                    = local.vpn_gateway_name
+  vpn_scale_units                     = var.vpn_scale_units
+  tags                                = var.tags
 }
 
 #deploy the private cloud
@@ -108,4 +110,12 @@ module "avs_service_health" {
   service_health_alert_name     = local.service_health_alert_name
   service_health_alert_scope_id = azurerm_resource_group.greenfield_privatecloud.id
   private_cloud_id              = module.avs_private_cloud.sddc_id
+}
+
+module "outbound_internet_test_firewall_rules" {
+  source = "../../modules/avs_azure_firewall_internet_outbound_rules"
+
+  firewall_policy_id  = module.avs_vwan_azure_firewall_w_policy_and_log_analytics.firewall_policy_id
+  avs_ip_ranges       = [var.avs_network_cidr, ]
+  has_firewall_policy = true
 }

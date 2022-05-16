@@ -49,6 +49,18 @@ variable "express_route_scale_units" {
   description = "the number of scale units to assign to the Express route gateway.  Each unit represents 2GB.  Value must be in range 1-10"
 }
 
+variable "azure_firewall_id" {
+  type        = string
+  description = "The firewall ID associated to this hub when it is a secure hub"
+  default     = "null"
+}
+
+variable "express_route_internet_through_azfw" {
+  type        = bool
+  description = "This flag determines whether to enable the AVS expressroute internet connectivity through the virtual hub firewall if one has been deployed."
+  default     = false
+}
+
 variable "vpn_gateway_name" {
   type        = string
   description = "The azure resource name for the vpn gateway in the vwan hub"

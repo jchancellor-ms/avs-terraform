@@ -31,6 +31,12 @@ variable "express_route_scale_units" {
   default     = 1
 }
 
+variable "express_route_internet_through_azfw" {
+  type        = bool
+  description = "This flag determines whether to enable the AVS expressroute internet connectivity through the virtual hub firewall if one has been deployed."
+  default     = false
+}
+
 variable "vpn_scale_units" {
   type        = number
   description = "the number of scale units to assign to the VPN gateway.  Each unit represents 500mbps."
