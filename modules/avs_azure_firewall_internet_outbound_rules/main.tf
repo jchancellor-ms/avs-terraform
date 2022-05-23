@@ -13,7 +13,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "outbound_internet_test
       protocols             = ["TCP", "UDP"]
       source_addresses      = var.avs_ip_ranges
       destination_addresses = ["*"]
-      destination_ports     = ["80", "443", "53"]
+      destination_ports     = ["80", "443", "53", "123"]
     }
   }
 }
@@ -29,7 +29,7 @@ resource "azurerm_firewall_network_rule_collection" "outbound_internet_test_coll
   rule {
     name                  = "outbound_internet"
     source_addresses      = var.avs_ip_ranges
-    destination_ports     = ["80", "443", "53"]
+    destination_ports     = ["80", "443", "53", "123"]
     destination_addresses = ["*"]
     protocols             = ["TCP", "UDP"]
   }

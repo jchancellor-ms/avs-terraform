@@ -83,3 +83,29 @@ variable "email_addresses" {
   type        = list(string)
   description = "A list of email addresses where service health alerts will be sent"
 }
+
+variable "jumpbox_spoke_vnet_address_space" {
+  type        = list(string)
+  description = "Address space summaries for the spoke Vnet"
+}
+
+variable "bastion_subnet_prefix" {
+  type        = list(string)
+  description = "A list of subnet prefix CIDR values used for the bastion subnet address space"
+}
+
+variable "jumpbox_subnet_prefix" {
+  type        = list(string)
+  description = "A list of subnet prefix CIDR values used for the jumpbox subnet address space"
+}
+
+variable "jumpbox_sku" {
+  type        = string
+  description = "The sku for the jumpbox vm"
+  default     = "Standard_D2as_v4"
+}
+
+variable "admin_username" {
+  type        = string
+  description = "The username for the jumpbox admin login"
+}

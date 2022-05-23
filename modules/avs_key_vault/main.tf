@@ -12,6 +12,13 @@ resource "azurerm_key_vault" "infra_vault" {
   tags                            = var.tags
 }
 
+#set a wait timer to handle creation lag issues
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [azurerm_key_vault.infra_vault]
+
+  create_duration = "30s"
+}
+
 /*  Add this block back when configuring a service principal to run the configuration
 resource "azurerm_key_vault_access_policy" "service_principal_access" {
   key_vault_id = azurerm_key_vault.infra_vault.id
@@ -48,4 +55,9 @@ resource "azurerm_key_vault_access_policy" "deployment_user_access" {
   storage_permissions = [
     "Backup", "Delete", "DeleteSAS", "Get", "GetSAS", "List", "ListSAS", "Recover", "RegenerateKey", "Restore", "Set", "SetSAS", "Update"
   ]
+
+  depends_on = [
+    time_sleep.wait_30_seconds
+  ]
+  
 }

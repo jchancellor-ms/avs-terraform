@@ -20,7 +20,7 @@ locals {
   keyvault_name = "${var.prefix}-AVS-keyvault-${random_string.namestring.result}"
 
   jumpbox_nic_name = "${var.prefix}-AVS-Jumpbox-Nic-${random_string.namestring.result}"
-  jumpbox_name     = "${var.prefix}-AVS-Jumpbox-${random_string.namestring.result}"
+  jumpbox_name     = "${var.prefix}-AVSJump-${random_string.namestring.result}"
 }
 
 #create a random string for uniqueness during redeployments using the same values

@@ -1,6 +1,4 @@
 #firewall errors if not installed in the same resource group as the vnet with the firewall subnet
-#passing the resource group details in as a variable and creating a manual depends on reference
-
 resource "azurerm_log_analytics_workspace" "simple" {
   name                = var.log_analytics_name
   location            = var.rg_location
@@ -15,6 +13,9 @@ resource "azurerm_firewall_policy" "avs_base_policy" {
   name                = var.vwan_firewall_policy_name
   resource_group_name = var.rg_name
   location            = var.rg_location
+  dns {
+    proxy_enabled = true
+  }
 }
 
 resource "azurerm_firewall" "firewall" {
