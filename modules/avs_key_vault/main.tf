@@ -59,5 +59,5 @@ resource "azurerm_key_vault_access_policy" "deployment_user_access" {
   depends_on = [
     time_sleep.wait_30_seconds
   ]
-  
+
 }
