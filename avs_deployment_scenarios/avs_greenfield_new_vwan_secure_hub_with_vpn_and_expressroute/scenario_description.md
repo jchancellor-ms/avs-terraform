@@ -1,4 +1,4 @@
-# Implement Greenfield AVS with Secure VWAN Hub and VPN hybrid connectivity
+# Implement AVS with new Secure VWAN Hub and VPN hybrid connectivity
 
 ## Scenario Details
 
