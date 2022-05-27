@@ -1,4 +1,4 @@
-# Implement Greenfield AVS with Secure VWAN Hub and VPN On-prem
+# Implement Greenfield AVS with Secure VWAN Hub and VPN hybrid connectivity
 
 ## Scenario Details
 
@@ -7,7 +7,8 @@ This scenario is meant for new Greenfield customers who want to implement a gree
 
 This scenario also deploys a spoke Vnet with a bastion and jump host.  These resources can be used for initial setup and testing and then be removed if there are prohibitions against allowing remote virtual machine access from the internet.
 
-<TODO: Insert scenario image here>
+![Secure VWAN VPN gateway with BGP scenario image](./images/AVS_VWAN_VPN_BGP.png)
+
 
 ### Internet Ingress/Egress
 Internet ingress and egress to AVS and Azure VM's will be enabled through one or more public IPs attached to the Azure Firewall in the secure hub. On-premises ingress/egress is expected to use existing configurations and not migrate to the VWAN hub.  <TODO: Add SNAT language?>
