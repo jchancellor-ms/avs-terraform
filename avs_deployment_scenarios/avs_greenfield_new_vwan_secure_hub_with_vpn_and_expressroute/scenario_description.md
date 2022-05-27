@@ -56,53 +56,68 @@ These steps represent deploying a configuration using the portal and vcenter.
     - This is only required if an existing VWAN resource does not already exist
 - Create an **Azure Firewall** and **Log Analytics** workspace
     - Create a Log Analytics workspace if one doesn't already exist for the firewall logs 
-    - Create the Azure Firewall to use Azure Policy
-    - The standard Sku can be used unless premium features are required in the environment
-    - Enable the DNS proxy to allow for future DNS configurations
+    - Create the Azure Firewall to use **Azure Firewall Policies**
+    - The standard sku can be used unless premium features are required in the environment
+    - Enable the **DNS proxy** to allow for future DNS configurations
     - Configure the firewall Diags to go the log analytics workspace
-- Create an initial Firewall policy for internet access
-    - Create new network rule collection for testing
-    - Create a new network rule in the rule collection 
+- Create an initial **Firewall Policy** for internet access
+    - Create new **network rule collection** for testing
+    - Create a new **network rule** in the rule collection 
         - Source = AVS Address Space, JumpServer Address space
         - Target = *
         - Ports  = 80, 443, 53, 123
         - Protocols = TCP, UDP
-- Create a new VWAN virtual hub using the VWAN created previously
-    - Deploy an ExpressRoute gateway in the hub
-    - Deploy a VPN gateway in the hub
-    - Configure the AVS expressRoute connection using the authorization key created previously with the internet security toggle enabled
-    - Add a route to the default route table with 0.0.0.0/0 pointing to the resource id of the azure firewall
-- Create Service health alerts for the AVS SLA related items
+- Create a new **VWAN virtual hub** using the VWAN created previously
+    - Ensure **Branch-to-Branch** is enabled
+    - Deploy an **ExpressRoute gateway** in the hub
+    - Deploy a **VPN gateway** in the hub
+    - Configure the AVS **expressRoute connection** using the authorization key created previously with the **internet security** toggle enabled
+    - Add a route to the default route table with **0.0.0.0/0** pointing to the resource id of the **azure firewall**
+- Create **Service Health Alerts** for the AVS SLA related items
+    Name    | Description | Metric | SplitDimension | Threshold | Severity 
+    ---     | :---:       | :---:  | :---:          | :---:     | :---:
+    **CPU**     | CPU Usage per Cluster | EffectiveCpuAverage | clustername | 80 | 2
+    **Memory**  | Memory Usage per Cluster | UsageAverage     | clustername | 80 | 2 
+    **Storage** | Storage Usage per Datastore | DiskUsedPercentage | dsname | 70 | 2 
+    **StorageCritical** | Storage Usage per Datastore| DiskUsedPercentage | dsname | 75 | 0 
+
 - Create the JumpBox/Bastion Spoke and Services
-    - Create the Jumpbox VNET with the following subnets
-        - jumpbox (/29 should be sufficient)
-        - Bastion (<TODO: add minimum size cidr>)
-    - Create the Bastion and Bastion public IP
+    - Create the **Jumpbox VNET** with the following subnets 
+        - For simplicity consider allocating a /24 and splitting it into 4 /26 ranges.
+        - **jumpbox** subnet(/29 should be sufficient)
+        - **AzureBastionSubnet** subnet (requires minimum of /26 with this exact naming)
+    - Create the **Bastion** and **Bastion Public IP**
+        - A Basic sku Bastion should be sufficient for basic testing. If keeping this configuration, consider using the Standard sku
+        - Standard Public IP sku
+        - Static Public IP
     - Create a keyvault for storing the jumpbox VM password as a secret
-        - Create the keyvault resource
-        - Create an Access policy for anyone needing access
-        - Create a secret value with the password
-    - Create the jumpbox VM
+        - Create the **Keyvault** resource
+        - Create an **Access policy** for anyone needing access
+        - Create a **secret value** with the password
+    - Create the **Jumpbox VM**
+        - No public IP attached 
+        - Only deploy an NSG if required
+        - If an NSG is deployed, ensure the firewall allows testing traffic
 - Test Jump Server connectivity
-    - Confirm that the VCenter comes up in a browser
+    - Confirm that the **VCenter** comes up in a browser and logins succeed
+        - Vcenter login information is found on the **Identity** menu item of the private cloud SDDC
     - Confirm that the jumpserver can access the internet
     - Review firewall logs to validate traffic is crossing the firewall
-- Configure the AVS guest network elements (<TODO: validate instructions here>)
-    - Set the default DNS to point to the Azure Firewall DNS proxy? (<TODO: validate this is a good practice? Thinking ahead toward using a DNS resolver here>)
+- Configure the AVS guest network elements 
     - Configure a new DHCP server
     - Create a new segment and link to the DHCP server
+    - Create a DNS scope on the AVS private cloud for any custom DNS required for LDAP configuration
 - Deploy a test VM into AVS 
     - <TODO: determine guest configuration and testing >
 - Connect the Remote VPN within VWAN
-    - Create a VWAN site for both tunnels
-        - Configure the Link description 
-        - Ensure the proper BGP configuration for the local site VPN
+    - Create a **VWAN site** for both tunnels
+        - Configure the **Link** BGP details 
     - Create two VWAN vpn gateway connections 
         - link to the two sites created previously
         - Ensure internet security enabled is set to false
         - Ensure BGP is enabled on the Connection link
         - <TODO: Confirm whether we need two links per connection>
-- Create the on-prem connections 
+- Create the on-prem connections on the **existing on-prem firewall or router**
     - Ensure the redundant tunnels are create to each VPN site
     - Validate the BGP configuration
 - Test the connectivity
@@ -136,5 +151,10 @@ In some cases the existing on-premise VPN device may not be able to do BGP.  In 
 ### Use of an existing VWAN or VWAN hub 
 
 In some cases it may be desired to connect to an existing VWAN and/or VWAN hub.  In those cases, modify the instructions to use the existing resources and make any necessary configuration changes on the existing hub.  (i.e. create new VPN and/or ExpressRoute gateways) Connection guidance for the connections should be the same in these cases.
+
+### Use of an existing Log Analytics workspace
+
+This solution assumes the creation of a new firewall with an associated log analytics workspace. If a previous workspace exists it is possible to use that workspace for the firewall logs and diagnostics.
+
 
 [(Back to top)](#table-of-contents)
