@@ -1,17 +1,25 @@
 # Implement AVS with new Secure VWAN Hub and VPN hybrid connectivity
 
+## Table of contents
+
+- [Scenario Details](#scenario-details)
+- [Scenario Implementation - Manual Steps](#scenario-implementation-with-manual-steps)
+- [Scenario Implementation - Automation Options](#automation-implementation)
+- [Appendix](#appendix)
+
+
 ## Scenario Details
 
 ### Overview
-This scenario is meant for new Greenfield customers who want to implement a greenfield AVS environment using VPN to make the hybrid connection. The solution implements a new Secure VWAN hub with VPN and ExpressRoute gateways. The firewall solution in the configuration is an Azure Firewall, due to the current firewall limitations for a secure hub. This document will be updated when routing intent reaches GA. 
+This scenario is meant for new Greenfield customers who want to implement a greenfield AVS environment using VPN to make the hybrid connection. The solution implements a new Secure VWAN hub with VPN and ExpressRoute gateways and Azure Firewall. 
 
-This scenario also deploys a spoke Vnet with a bastion and jump host.  These resources can be used for initial setup and testing and then be removed if there are prohibitions against allowing remote virtual machine access from the internet.
+This scenario also deploys a temporary spoke Vnet with a bastion and jump host.  These resources can be used for initial setup and testing and then be removed if there are prohibitions against allowing remote virtual machine access from the internet.
 
 ![Secure VWAN VPN gateway with BGP scenario image](./images/AVS_VWAN_VPN_BGP.png)
 
 
 ### Internet Ingress/Egress
-Internet ingress and egress to AVS and Azure VM's will be enabled through one or more public IPs attached to the Azure Firewall in the secure hub. On-premises ingress/egress is expected to use existing configurations and not migrate to the VWAN hub.  <TODO: Add SNAT language?>
+Internet ingress and egress to AVS and Azure VM's will be enabled through one or more public IPs attached to the Azure Firewall in the secure hub. On-premises ingress/egress is expected to use existing routing configurations and not migrate to the VWAN hub.  <TODO: Add SNAT language?>
 
 ### Network Inspection
 The solution configures network inspection with the Azure Firewall on the following flows:
@@ -29,11 +37,11 @@ Source                    | Azure VMWare Solution | Internet | On-Premises | Spo
 - Traffic inspection between on-premises sites will be managed by existing equipment and configurations
 - If subnet to subnet traffic inspection is required then UDR's will need to be configured on each subnet. <TODO: confirm this statement>
 
+[(Back to top)](#table-of-contents)
 
-## Scenario Implementation Steps
+## Scenario implementation with manual steps
 The steps described below are an outline for deploying this scenario manually. If you wish to use the accompanying automation, then skip to the automation guidance below the manual workflow.
 
-### Manual implementation
 These steps represent deploying a configuration using the portal and vcenter.
 
 - Create the required **resource groups** in the target subscription
@@ -103,7 +111,8 @@ These steps represent deploying a configuration using the portal and vcenter.
     - Ensure the AVS and Jump VM's can reach the on-premises VM's
     - Check the firewall logs to ensure traffic is seen on the firewall for each test
 
-### Automation implementation
+[(Back to top)](#table-of-contents)
+## Automation implementation
 
 Multiple automation options exist for deploying this scenario into Azure. Please use the links below to access the desired automation solution.
 Solution | Code and Guidance
@@ -114,3 +123,18 @@ Solution | Code and Guidance
 **Powershell**            | <TODO: Insert link here>
 **AZ CLI**                | <TODO: Insert link here>
 
+[(Back to top)](#table-of-contents)
+
+## Appendix
+
+There are several variations of this implementation that can use the general framework of the implementation instructions, but with the following modifications.
+
+### On-Prem VPN without BGP capability
+
+In some cases the existing on-premise VPN device may not be able to do BGP.  In this case, the routes can be published statically and the VWAN VPN gateway will share the routes with the AVS and the other VWAN spokes.  Modify these instructions by configuring the VWAN VPN connections and the on-prem VPN connections to not use BGP when sharing routing information.
+
+### Use of an existing VWAN or VWAN hub 
+
+In some cases it may be desired to connect to an existing VWAN and/or VWAN hub.  In those cases, modify the instructions to use the existing resources and make any necessary configuration changes on the existing hub.  (i.e. create new VPN and/or ExpressRoute gateways) Connection guidance for the connections should be the same in these cases.
+
+[(Back to top)](#table-of-contents)
