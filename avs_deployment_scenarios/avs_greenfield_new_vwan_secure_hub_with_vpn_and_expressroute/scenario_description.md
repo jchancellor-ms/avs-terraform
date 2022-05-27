@@ -36,17 +36,17 @@ The steps described below are an outline for deploying this scenario manually. I
 ### Manual implementation
 These steps represent deploying a configuration using the portal and vcenter.
 
-- Create the required resource groups in the target subscription
+- Create the required **resource groups** in the target subscription
     - Private Cloud - used to deploy the private cloud and any associated resources
     - Networking  - Used to deploy the firewall, VWAN, and VWAN hub resources
     - Jump/Bastion - Used to deploy the jump host and bastion related resources
-- Deploy the AVS private cloud
+- Deploy the **AVS private cloud**
     - Create a private cloud with an initial management cluster
     - Do not enable the internet access toggle as this will be managed in the secure hub
     - Upon deployment completion, create an initial expressroute authorization key for attaching to the VWAN hub
-- Create a new VWAN resource
+- Create a new **VWAN** resource
     - This is only required if an existing VWAN resource does not already exist
-- Create an Azure Firewall and Log Analytics workspace
+- Create an **Azure Firewall** and **Log Analytics** workspace
     - Create a Log Analytics workspace if one doesn't already exist for the firewall logs 
     - Create the Azure Firewall to use Azure Policy
     - The standard Sku can be used unless premium features are required in the environment
