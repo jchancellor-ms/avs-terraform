@@ -1,27 +1,32 @@
 # Create local variable derived from an input prefix or modify for customer naming
 locals {
   #update naming convention with target naming convention if different
+  #resource group names
   private_cloud_rg_name = "${var.prefix}-PrivateCloud-${random_string.namestring.result}"
   network_rg_name       = "${var.prefix}-Network-${random_string.namestring.result}"
-  jumpbox_rg_name       = "${var.prefix}-Jumpbox-${random_string.namestring.result}"
+  #jumpbox_rg_name       = "${var.prefix}-Jumpbox-${random_string.namestring.result}"
 
+  #AVS specific names
   sddc_name                           = "${var.prefix}-AVS-SDDC-${random_string.namestring.result}"
   expressroute_authorization_key_name = "${var.prefix}-AVS-ExpressrouteAuthKey-${random_string.namestring.result}"
   express_route_connection_name       = "${var.prefix}-AVS-ExpressrouteConnection-${random_string.namestring.result}"
 
+  #VWAN hub and gateway names  
+  vwan_name                  = (var.vwan_already_exists ? var.vwan_name : "${var.prefix}-AVS-vwan-${random_string.namestring.result}")
+  vwan_hub_name              = "${var.prefix}-AVS-vwan-hub-${random_string.namestring.result}"
+  vwan_firewall_policy_name  = "${var.prefix}-AVS-vwan-firewall-policy-${random_string.namestring.result}"
+  vwan_firewall_name         = "${var.prefix}-AVS-vwan-firewall-${random_string.namestring.result}"
+  vwan_log_analytics_name    = "${var.prefix}-AVS-vwan-firewall-log-analytics-${random_string.namestring.result}"
   express_route_gateway_name = "${var.prefix}-AVS-express-route-gw-${random_string.namestring.result}"
   vpn_gateway_name           = "${var.prefix}-AVS-vpn-gw-${random_string.namestring.result}"
 
-  vwan_name                 = (var.vwan_already_exists ? var.vwan_name : "${var.prefix}-AVS-vwan-${random_string.namestring.result}")
-  vwan_hub_name             = "${var.prefix}-AVS-vwan-hub-${random_string.namestring.result}"
-  vwan_firewall_policy_name = "${var.prefix}-AVS-vwan-firewall-policy-${random_string.namestring.result}"
-  vwan_firewall_name        = "${var.prefix}-AVS-vwan-firewall-${random_string.namestring.result}"
-  vwan_log_analytics_name   = "${var.prefix}-AVS-vwan-firewall-log-analytics-${random_string.namestring.result}"
-
+  #service health and monitor names
   action_group_name         = "${var.prefix}-AVS-action-group-${random_string.namestring.result}"
   action_group_shortname    = "avs-sddc-sh1"
   service_health_alert_name = "${var.prefix}-AVS-service-health-alert-${random_string.namestring.result}"
 
+/*
+  #jumpbox and bastion resource names
   jumpbox_spoke_vnet_name            = "${var.prefix}-AVS-vnet-jumpbox-${random_string.namestring.result}"
   jumpbox_spoke_vnet_connection_name = "${var.prefix}-AVS-vnet-connection-jumpbox-${random_string.namestring.result}"
   jumpbox_nic_name                   = "${var.prefix}-AVS-Jumpbox-Nic-${random_string.namestring.result}"
@@ -29,6 +34,10 @@ locals {
   bastion_pip_name                   = "${var.prefix}-AVS-bastion-pip-${random_string.namestring.result}"
   bastion_name                       = "${var.prefix}-AVS-bastion-${random_string.namestring.result}"
   keyvault_name                      = "${var.prefix}-AVS-jump-kv-${random_string.namestring.result}"
+*/
+
+  #list of RFC1918 top level summaries for use in VWAN routing
+  private_range_prefixes = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
 
 }
 
@@ -76,10 +85,11 @@ module "avs_vwan_hub_with_vpn_and_express_route_gateways" {
   express_route_authorization_key     = module.avs_private_cloud.sddc_express_route_authorization_key
   express_route_scale_units           = var.express_route_scale_units
   azure_firewall_id                   = module.avs_vwan_azure_firewall_w_policy_and_log_analytics.firewall_id
-  express_route_internet_through_azfw = var.express_route_internet_through_azfw
+  all_branch_traffic_through_firewall = var.all_branch_traffic_through_firewall
   vpn_gateway_name                    = local.vpn_gateway_name
   vpn_scale_units                     = var.vpn_scale_units
   tags                                = var.tags
+  private_range_prefixes              = local.private_range_prefixes
 }
 
 #deploy the private cloud
@@ -122,13 +132,15 @@ module "avs_service_health" {
   private_cloud_id              = module.avs_private_cloud.sddc_id
 }
 
+/*
 ##NOTE: The modules below this line are for initial testing and can be removed after the implementation if desired 
 #Deploy firewall rules allowing outbound http, https, ntp, and dns
 module "outbound_internet_test_firewall_rules" {
   source = "../../modules/avs_azure_firewall_internet_outbound_rules"
 
   firewall_policy_id  = module.avs_vwan_azure_firewall_w_policy_and_log_analytics.firewall_policy_id
-  avs_ip_ranges       = [var.avs_network_cidr, var.jumpbox_spoke_vnet_address_space[0]]
+  #avs_ip_ranges       = [var.avs_network_cidr, var.jumpbox_spoke_vnet_address_space[0]]
+  private_range_prefixes = local.private_range_prefixes
   has_firewall_policy = true
 }
 
@@ -174,9 +186,9 @@ module "avs_bastion" {
 
 #deploy the jumpbox
 #deploy the key vault for the jump host
-data "azurerm_client_config" "current" {
+data "azurerm_client_config" "current" {}
 
-}
+data "azuread_client_config" "current" {}
 
 module "avs_keyvault_with_access_policy" {
   source = "../../modules/avs_key_vault"
@@ -186,7 +198,8 @@ module "avs_keyvault_with_access_policy" {
   rg_location               = azurerm_resource_group.greenfield_jumpbox.location
   keyvault_name             = local.keyvault_name
   azure_ad_tenant_id        = data.azurerm_client_config.current.tenant_id
-  deployment_user_object_id = data.azurerm_client_config.current.object_id
+  #deployment_user_object_id = data.azurerm_client_config.current.object_id
+  deployment_user_object_id = data.azuread_client_config.current.object_id #temp fix for az cli breaking change
   tags                      = var.tags
 }
 
@@ -208,3 +221,4 @@ module "avs_jumpbox" {
     module.avs_keyvault_with_access_policy
   ]
 }
+*/

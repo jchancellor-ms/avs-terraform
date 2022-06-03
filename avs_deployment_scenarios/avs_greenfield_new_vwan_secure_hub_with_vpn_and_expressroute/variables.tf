@@ -31,7 +31,7 @@ variable "express_route_scale_units" {
   default     = 1
 }
 
-variable "express_route_internet_through_azfw" {
+variable "all_branch_traffic_through_firewall" {
   type        = bool
   description = "This flag determines whether to enable the AVS expressroute internet connectivity through the virtual hub firewall if one has been deployed."
   default     = false
@@ -84,6 +84,7 @@ variable "email_addresses" {
   description = "A list of email addresses where service health alerts will be sent"
 }
 
+/*
 variable "jumpbox_spoke_vnet_address_space" {
   type        = list(string)
   description = "Address space summaries for the spoke Vnet"
@@ -109,3 +110,4 @@ variable "admin_username" {
   type        = string
   description = "The username for the jumpbox admin login"
 }
+*/

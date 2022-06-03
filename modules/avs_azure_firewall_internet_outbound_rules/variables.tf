@@ -17,9 +17,9 @@ variable "azure_firewall_rg_name" {
   default     = ""
 }
 
-variable "avs_ip_ranges" {
+variable "private_range_prefixes" {
   type        = list(string)
-  description = "The set of IP ranges assigned to AVS for management and workloads"
+  description = "The RFC1918 non-routable summaries"
 }
 
 variable "has_firewall_policy" {

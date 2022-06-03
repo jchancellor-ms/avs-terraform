@@ -38,4 +38,9 @@ resource "azapi_update_resource" "routeserver_branch_to_branch" {
       allowBranchToBranchTraffic = true
     }
   })
+
+  depends_on = [
+    azurerm_public_ip.routeserver_pip,
+    azurerm_virtual_hub_ip.routeserver
+  ]
 }

@@ -5,31 +5,31 @@ resource "azurerm_firewall_policy_rule_collection_group" "outbound_internet_test
   priority           = 1000
 
   network_rule_collection {
-    name     = "network_rule_collection1"
+    name     = "test_network_rule_collection_1"
     priority = 1000
     action   = "Allow"
     rule {
-      name                  = "outbound_internet"
+      name                  = "outbound_internet_and_branch_to_branch"
       protocols             = ["TCP", "UDP"]
-      source_addresses      = var.avs_ip_ranges
+      source_addresses      = var.private_range_prefixes
       destination_addresses = ["*"]
-      destination_ports     = ["80", "443", "53", "123"]
+      destination_ports     = ["80", "443", "53", "123", "3389", "22"]
     }
   }
 }
 
 resource "azurerm_firewall_network_rule_collection" "outbound_internet_test_collection" {
   count               = var.has_firewall_policy ? 0 : 1
-  name                = "outbound_internet_test_collection"
+  name                = "test_network_rule_collection_1"
   azure_firewall_name = var.azure_firewall_name
   resource_group_name = var.azure_firewall_rg_name
   priority            = 1000
   action              = "Allow"
 
   rule {
-    name                  = "outbound_internet"
-    source_addresses      = var.avs_ip_ranges
-    destination_ports     = ["80", "443", "53", "123"]
+    name                  = "outbound_internet_and_branch_to_branch"
+    source_addresses      = var.private_range_prefixes
+    destination_ports     = ["80", "443", "53", "123", "3389", "22"]
     destination_addresses = ["*"]
     protocols             = ["TCP", "UDP"]
   }

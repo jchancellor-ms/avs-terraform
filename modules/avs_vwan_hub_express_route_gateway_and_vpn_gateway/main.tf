@@ -1,3 +1,8 @@
+locals {
+  default_route_destinations = concat(["0.0.0.0/0"], var.private_range_prefixes)
+}
+
+
 #create a virtual hub
 resource "azurerm_virtual_hub" "vwan_hub" {
   name                = var.vwan_hub_name
@@ -31,17 +36,17 @@ resource "azurerm_express_route_connection" "avs_private_cloud_connection" {
   express_route_gateway_id         = azurerm_express_route_gateway.vwan_express_route_gateway.id
   express_route_circuit_peering_id = var.express_route_circuit_peering_id
   authorization_key                = var.express_route_authorization_key
-  enable_internet_security         = var.express_route_internet_through_azfw #publish a default route to the internet through Azure Firewall when true
+  enable_internet_security         = var.all_branch_traffic_through_firewall #publish a default route to the internet through Azure Firewall when true
 }
 
 #add a quad 0 route pointing to the firewall to the default route table
 resource "azurerm_virtual_hub_route_table_route" "default_secure_internet" {
-  count          = var.express_route_internet_through_azfw ? 1 : 0 #push a default route if routing internet to the azfw in a secure hub
+  count          = var.all_branch_traffic_through_firewall ? 1 : 0 #push a default route if routing branch traffic to azfw in a secure hub
   route_table_id = azurerm_virtual_hub.vwan_hub.default_route_table_id
 
-  name              = "public_traffic"
+  name              = "default_route"
   destinations_type = "CIDR"
-  destinations      = ["0.0.0.0/0"]
+  destinations      = local.default_route_destinations
   next_hop_type     = "ResourceId"
   next_hop          = var.azure_firewall_id
 }

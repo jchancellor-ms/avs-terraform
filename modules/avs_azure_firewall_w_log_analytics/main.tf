@@ -39,9 +39,10 @@ resource "azurerm_firewall" "firewall" {
 
 #configure the firewall to send logs to a log analytics workspace
 resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
-  name                       = "${var.firewall_name}-diagnostic-setting"
-  target_resource_id         = azurerm_firewall.firewall.id
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.simple.id
+  name                           = "${var.firewall_name}-diagnostic-setting"
+  target_resource_id             = azurerm_firewall.firewall.id
+  log_analytics_workspace_id     = azurerm_log_analytics_workspace.simple.id
+  log_analytics_destination_type = "AzureDiagnostics"
 
   log {
     category = "AzureFirewallApplicationRule"

@@ -55,9 +55,9 @@ variable "azure_firewall_id" {
   default     = "null"
 }
 
-variable "express_route_internet_through_azfw" {
+variable "all_branch_traffic_through_firewall" {
   type        = bool
-  description = "This flag determines whether to enable the AVS expressroute internet connectivity through the virtual hub firewall if one has been deployed."
+  description = "This flag determines whether to enable the vwan hub to route all branch traffic through the virtual hub azure firewall."
   default     = false
 }
 
@@ -74,4 +74,9 @@ variable "vpn_scale_units" {
 variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"
+}
+
+variable "private_range_prefixes" {
+  type        = list(string)
+  description = "List of rfc1918 prefixes to next-hop to the firewall as part of the default route table default route"
 }

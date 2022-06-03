@@ -14,6 +14,7 @@ locals {
 
   jumpbox_nic_name = "${var.prefix}-op-Jumpbox-Nic-${random_string.namestring.result}"
   jumpbox_name     = "${var.prefix}-jump"
+  route_table_name = "${var.prefix}-jump-subnet-rt"
 }
 
 resource "random_string" "namestring" {
@@ -41,6 +42,27 @@ module "on_prem_virtual_network" {
   bastion_subnet_prefix = var.bastion_subnet_prefix
   jumpbox_subnet_prefix = var.jumpbox_subnet_prefix
   tags                  = var.tags
+}
+
+#create a UDR overriding the 0.0.0.0/0 on the jump subnet
+resource "azurerm_route_table" "jump_default_override" {
+  name                          = local.route_table_name
+  location                      = azurerm_resource_group.test_on_prem.name
+  resource_group_name           = azurerm_resource_group.test_on_prem.location
+  disable_bgp_route_propagation = false
+
+  route {
+    name           = "default"
+    address_prefix = "0.0.0.0/0"
+    next_hop_type  = "Internet"
+  }
+
+  tags = var.tags
+}
+
+resource "azurerm_subnet_route_table_association" "jump_subnet_association" {
+  subnet_id      = module.on_prem_virtual_network.jumpbox_subnet_id
+  route_table_id = azurerm_route_table.jump_default_override.id
 }
 
 module "on_prem_vpn_gateway" {

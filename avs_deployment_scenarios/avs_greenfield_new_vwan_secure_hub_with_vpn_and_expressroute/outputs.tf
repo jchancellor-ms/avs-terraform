@@ -25,3 +25,7 @@ output "network_resource_group_name" {
 output "network_resource_group_location" {
   value = azurerm_resource_group.greenfield_network.location
 }
+
+output "firewall_policy_id" {
+  value = module.avs_vwan_azure_firewall_w_policy_and_log_analytics.firewall_policy_id
+}
