@@ -25,7 +25,7 @@ locals {
   action_group_shortname    = "avs-sddc-sh1"
   service_health_alert_name = "${var.prefix}-AVS-service-health-alert-${random_string.namestring.result}"
 
-/*
+  /*
   #jumpbox and bastion resource names
   jumpbox_spoke_vnet_name            = "${var.prefix}-AVS-vnet-jumpbox-${random_string.namestring.result}"
   jumpbox_spoke_vnet_connection_name = "${var.prefix}-AVS-vnet-connection-jumpbox-${random_string.namestring.result}"

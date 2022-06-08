@@ -25,3 +25,7 @@ output "vpn_gateway_asn" {
 output "keyvault_id" {
   value = module.on_prem_keyvault_with_access_policy.keyvault_id
 }
+
+output "deploy_id" {
+  value = random_string.namestring.result
+}

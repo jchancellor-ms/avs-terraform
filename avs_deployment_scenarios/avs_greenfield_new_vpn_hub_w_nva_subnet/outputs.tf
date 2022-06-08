@@ -72,3 +72,23 @@ output "network_resource_group_name" {
 output "network_resource_group_location" {
   value = azurerm_resource_group.greenfield_network.location
 }
+
+output "prefix" {
+  value = var.prefix
+}
+
+output "network_rg_name" {
+  value = local.network_rg_name
+}
+
+output "network_rg_location" {
+  value = var.region
+}
+
+output "subnet_ids" {
+  value = module.avs_hub_virtual_network.subnet_ids
+}
+
+output "routeserver_details" {
+  value = module.avs_routeserver.routeserver_details
+}

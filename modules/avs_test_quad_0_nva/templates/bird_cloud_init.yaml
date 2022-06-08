@@ -1,0 +1,53 @@
+#cloud-config
+packages:
+  - bird
+runcmd:
+  - [ systemctl, restart, bird ]
+write_files:
+- content: |
+    log syslog all;
+    protocol device {
+            scan time 10;
+    }
+    protocol direct {
+        disabled;
+    }
+    protocol kernel {
+        preference 254;
+        learn;
+        merge paths on;
+        import filter {
+            reject;
+        };
+        export filter {
+            reject;
+        };
+    }
+    protocol static {
+        import all;
+        # Example: 
+        # route 0.0.0.0/0 via $nva_default_gw;
+        # Routes advertised --DONT CHANGE THIS LINE--
+        route 0.0.0.0/0 via ${nva_private_ip} ;
+    }
+    filter TO_RS {
+        bgp_next_hop = ${azfw_private_ip};
+        accept;
+    }
+    protocol bgp rs0 {
+        description "RouteServer instance 0";
+        multihop;
+        local as ${nva_asn};
+        neighbor ${rs_ip1} as ${rs_asn};
+            import filter {accept;};
+            export filter TO_RS;
+    }
+    protocol bgp rs1 {
+        description "Route Server instance 1";
+        multihop;
+        local as ${nva_asn};
+        neighbor ${rs_ip2} as ${rs_asn};
+            import filter {accept;};
+            export filter TO_RS;
+    }
+  path: /etc/bird/bird.conf

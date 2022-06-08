@@ -1,6 +1,6 @@
 locals {
   #jumpbox and bastion resource names  
-  jumpbox_rg_name       = "${var.prefix}-Jumpbox-${random_string.namestring.result}"
+  jumpbox_rg_name                    = "${var.prefix}-Jumpbox-${random_string.namestring.result}"
   jumpbox_spoke_vnet_name            = "${var.prefix}-AVS-vnet-jumpbox-${random_string.namestring.result}"
   jumpbox_spoke_vnet_connection_name = "${var.prefix}-AVS-vnet-connection-jumpbox-${random_string.namestring.result}"
   jumpbox_nic_name                   = "${var.prefix}-AVS-Jumpbox-Nic-${random_string.namestring.result}"
@@ -25,10 +25,10 @@ resource "random_string" "namestring" {
 module "outbound_internet_test_firewall_rules" {
   source = "../../modules/avs_azure_firewall_internet_outbound_rules"
 
-  firewall_policy_id  = var.firewall_policy_id
+  firewall_policy_id = var.firewall_policy_id
   #avs_ip_ranges       = [var.avs_network_cidr, var.jumpbox_spoke_vnet_address_space[0]]
   private_range_prefixes = local.private_range_prefixes
-  has_firewall_policy = true
+  has_firewall_policy    = true
 }
 
 #deploy a new resource group for the jumpbox and bastion components
@@ -81,10 +81,10 @@ module "avs_keyvault_with_access_policy" {
   source = "../../modules/avs_key_vault"
 
   #values to create the keyvault
-  rg_name                   = azurerm_resource_group.greenfield_jumpbox.name
-  rg_location               = azurerm_resource_group.greenfield_jumpbox.location
-  keyvault_name             = local.keyvault_name
-  azure_ad_tenant_id        = data.azurerm_client_config.current.tenant_id
+  rg_name            = azurerm_resource_group.greenfield_jumpbox.name
+  rg_location        = azurerm_resource_group.greenfield_jumpbox.location
+  keyvault_name      = local.keyvault_name
+  azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
   #deployment_user_object_id = data.azurerm_client_config.current.object_id
   deployment_user_object_id = data.azuread_client_config.current.object_id #temp fix for az cli breaking change
   tags                      = var.tags

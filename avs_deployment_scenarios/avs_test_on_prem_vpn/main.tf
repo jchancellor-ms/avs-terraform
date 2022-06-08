@@ -47,8 +47,8 @@ module "on_prem_virtual_network" {
 #create a UDR overriding the 0.0.0.0/0 on the jump subnet
 resource "azurerm_route_table" "jump_default_override" {
   name                          = local.route_table_name
-  location                      = azurerm_resource_group.test_on_prem.name
-  resource_group_name           = azurerm_resource_group.test_on_prem.location
+  location                      = azurerm_resource_group.test_on_prem.location
+  resource_group_name           = azurerm_resource_group.test_on_prem.name
   disable_bgp_route_propagation = false
 
   route {
@@ -91,19 +91,21 @@ module "avs_bastion" {
 }
 
 #deploy the key vault for the jump host
-data "azurerm_client_config" "current" {
 
-}
+data "azurerm_client_config" "current" {}
+
+data "azuread_client_config" "current" {}
 
 module "on_prem_keyvault_with_access_policy" {
   source = "../../modules/avs_key_vault"
 
   #values to create the keyvault
-  rg_name                   = azurerm_resource_group.test_on_prem.name
-  rg_location               = azurerm_resource_group.test_on_prem.location
-  keyvault_name             = local.keyvault_name
-  azure_ad_tenant_id        = data.azurerm_client_config.current.tenant_id
-  deployment_user_object_id = data.azurerm_client_config.current.object_id
+  rg_name            = azurerm_resource_group.test_on_prem.name
+  rg_location        = azurerm_resource_group.test_on_prem.location
+  keyvault_name      = local.keyvault_name
+  azure_ad_tenant_id = data.azurerm_client_config.current.tenant_id
+  #deployment_user_object_id = data.azurerm_client_config.current.object_id
+  deployment_user_object_id = data.azuread_client_config.current.object_id #temp fix for az cli breaking change
   tags                      = var.tags
 }
 

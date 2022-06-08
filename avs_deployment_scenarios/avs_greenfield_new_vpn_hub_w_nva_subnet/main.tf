@@ -55,18 +55,16 @@ resource "azurerm_resource_group" "greenfield_network" {
   location = var.region
 }
 
-#Create a virtual network with gateway, bastion, and jumpbox subnets
-module "avs_virtual_network" {
-  source = "../../modules/avs_vnet_w_gateway_routeserver_and_azure_firewall"
+#Create a virtual network with gateway, routeserver, and firewall nva subnets
+module "avs_hub_virtual_network" {
+  source = "../../modules/avs_vnet_variable_subnets"
 
-  vnet_name                  = local.vnet_name
-  vnet_address_space         = var.vnet_address_space
-  rg_name                    = azurerm_resource_group.greenfield_network.name
-  rg_location                = azurerm_resource_group.greenfield_network.location
-  gateway_subnet_prefix      = var.gateway_subnet_prefix
-  route_server_subnet_prefix = var.route_server_subnet_prefix
-  firewall_subnet_prefix     = var.firewall_subnet_prefix
-  tags                       = var.tags
+  rg_name            = azurerm_resource_group.greenfield_network.name
+  rg_location        = azurerm_resource_group.greenfield_network.location
+  vnet_name          = local.vnet_name
+  vnet_address_space = var.vnet_address_space
+  subnets            = var.subnets
+  tags               = var.tags
 }
 
 #deploy the expressroute gateway in the gateway subnet 
@@ -78,7 +76,7 @@ module "avs_expressroute_gateway" {
   expressroute_gateway_sku        = var.expressroute_gateway_sku
   rg_name                         = azurerm_resource_group.greenfield_network.name
   rg_location                     = azurerm_resource_group.greenfield_network.location
-  gateway_subnet_id               = module.avs_virtual_network.gateway_subnet_id
+  gateway_subnet_id               = module.avs_hub_virtual_network.subnet_ids["GatewaySubnet"].id
   express_route_connection_name   = local.express_route_connection_name
   express_route_id                = module.avs_private_cloud.sddc_express_route_id
   express_route_authorization_key = module.avs_private_cloud.sddc_express_route_authorization_key
@@ -103,8 +101,6 @@ module "avs_private_cloud" {
   tags                                = var.tags
 }
 
-
-
 #deploy a VPNGateway
 module "avs_vpn_gateway" {
   source = "../../modules/avs_vpn_gateway"
@@ -116,7 +112,7 @@ module "avs_vpn_gateway" {
   asn               = var.asn
   rg_name           = azurerm_resource_group.greenfield_network.name
   rg_location       = azurerm_resource_group.greenfield_network.location
-  gateway_subnet_id = module.avs_virtual_network.gateway_subnet_id
+  gateway_subnet_id = module.avs_hub_virtual_network.subnet_ids["GatewaySubnet"].id
 }
 
 #deploy a routeserver
@@ -128,10 +124,10 @@ module "avs_routeserver" {
   virtual_hub_name       = local.virtual_hub_name
   virtual_hub_pip_name   = local.virtual_hub_pip_name
   route_server_name      = local.route_server_name
-  route_server_subnet_id = module.avs_virtual_network.route_server_subnet_id
+  route_server_subnet_id = module.avs_hub_virtual_network.subnet_ids["RouteServerSubnet"].id
 }
 
-
+/*
 #deploy azure firewall in the hub
 module "avs_azure_firewall" {
   source = "../../modules/avs_azure_firewall_w_log_analytics"
@@ -142,10 +138,10 @@ module "avs_azure_firewall" {
   tags               = var.tags
   firewall_pip_name  = local.firewall_pip_name
   firewall_name      = local.firewall_name
-  firewall_subnet_id = module.avs_virtual_network.firewall_subnet_id
+  firewall_subnet_id = module.avs_hub_virtual_network.subnet_ids["RouteServerSubnet"].id
   log_analytics_name = local.log_analytics_name
 }
-
+*/
 
 module "avs_service_health" {
   source = "../../modules/avs_service_health"

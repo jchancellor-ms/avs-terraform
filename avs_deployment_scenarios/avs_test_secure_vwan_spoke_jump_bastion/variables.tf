@@ -40,11 +40,11 @@ variable "tags" {
 }
 
 variable "firewall_policy_id" {
-    type = string
-    description = "Policy ID for the firewall policy in the vwan secure hub where test firewall rules will be deployed"
+  type        = string
+  description = "Policy ID for the firewall policy in the vwan secure hub where test firewall rules will be deployed"
 }
 
 variable "vwan_hub_id" {
-  type = string
+  type        = string
   description = "Azure resource id for the vwan hub where the spoke vnet will be connected."
 }

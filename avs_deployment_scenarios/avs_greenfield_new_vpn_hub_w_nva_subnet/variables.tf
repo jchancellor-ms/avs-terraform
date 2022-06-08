@@ -13,19 +13,11 @@ variable "vnet_address_space" {
   description = "List of CIDR ranges assigned to the hub VNET.  Typically one larger range."
 }
 
-variable "gateway_subnet_prefix" {
-  type        = list(string)
-  description = "A list of subnet prefix CIDR values used for the gateway subnet address space"
-}
-
-variable "route_server_subnet_prefix" {
-  type        = list(string)
-  description = "A list of subnet prefix CIDR values used for the route_server subnet address space"
-}
-
-variable "firewall_subnet_prefix" {
-  type        = list(string)
-  description = "A list of subnet prefix CIDR values used for the firewall subnet address space"
+variable "subnets" {
+  type = list(object({
+    name           = string
+    address_prefix = list(string)
+  }))
 }
 
 variable "expressroute_gateway_sku" {
@@ -61,16 +53,6 @@ variable "asn" {
   type        = number
   description = "The ASN for bgp on the VPN gateway"
   default     = "65515"
-}
-
-variable "firewall_sku_tier" {
-  type        = string
-  description = "Firewall Sku Tier - allowed values are Standard and Premium"
-  default     = "Standard"
-  validation {
-    condition     = contains(["Standard", "Premium"], var.firewall_sku_tier)
-    error_message = "Value must be Standard or Premium."
-  }
 }
 
 variable "email_addresses" {
