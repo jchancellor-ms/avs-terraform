@@ -127,22 +127,6 @@ module "avs_routeserver" {
   route_server_subnet_id = module.avs_hub_virtual_network.subnet_ids["RouteServerSubnet"].id
 }
 
-/*
-#deploy azure firewall in the hub
-module "avs_azure_firewall" {
-  source = "../../modules/avs_azure_firewall_w_log_analytics"
-
-  rg_name            = azurerm_resource_group.greenfield_network.name
-  rg_location        = azurerm_resource_group.greenfield_network.location
-  firewall_sku_tier  = var.firewall_sku_tier
-  tags               = var.tags
-  firewall_pip_name  = local.firewall_pip_name
-  firewall_name      = local.firewall_name
-  firewall_subnet_id = module.avs_hub_virtual_network.subnet_ids["RouteServerSubnet"].id
-  log_analytics_name = local.log_analytics_name
-}
-*/
-
 module "avs_service_health" {
   source = "../../modules/avs_service_health"
 

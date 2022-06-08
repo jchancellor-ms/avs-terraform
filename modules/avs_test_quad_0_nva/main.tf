@@ -91,4 +91,10 @@ resource "azurerm_subnet_route_table_association" "nva_subnet_rt" {
   route_table_id = azurerm_route_table.nva_udr.id
 }
 
-#create routeserver peering?
+#create routeserver peering
+resource "azurerm_virtual_hub_bgp_connection" "nva_vm" {
+  name           = "${var.nva_name}-bgp-connection"
+  virtual_hub_id = var.virtual_hub_id
+  peer_asn       = var.nva_asn
+  peer_ip        = azurerm_network_interface.bird_nic.private_ip_address
+}

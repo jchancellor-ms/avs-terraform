@@ -38,3 +38,8 @@ variable "key_vault_id" {
   type        = string
   description = "the resource id for the keyvault where the password will be stored"
 }
+
+variable "virtual_hub_id" {
+  type        = string
+  description = "the resource id for the virtual hub for the routeserver being peered to the nva for bgp"
+}
