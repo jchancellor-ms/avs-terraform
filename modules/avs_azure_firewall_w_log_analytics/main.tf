@@ -37,6 +37,15 @@ resource "azurerm_firewall" "firewall" {
   }
 }
 
+resource "azurerm_firewall_policy" "avs_base_policy" {
+  name                = var.firewall_policy_name
+  resource_group_name = var.rg_name
+  location            = var.rg_location
+  dns {
+    proxy_enabled = true
+  }
+}
+
 #configure the firewall to send logs to a log analytics workspace
 resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   name                           = "${var.firewall_name}-diagnostic-setting"

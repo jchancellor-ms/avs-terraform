@@ -13,3 +13,11 @@ output "firewall_name" {
 output "firewall_public_ip" {
   value = azurerm_public_ip.firewall_pip.ip_address
 }
+
+output "firewall_policy_name" {
+  value = var.firewall_policy_name
+}
+
+output "firewall_policy_id" {
+  value = azurerm_firewall_policy.avs_base_policy.id
+}

@@ -77,6 +77,7 @@ output "prefix" {
   value = var.prefix
 }
 
+#TODO - duplicate, fix this 
 output "network_rg_name" {
   value = local.network_rg_name
 }
@@ -91,4 +92,8 @@ output "subnet_ids" {
 
 output "routeserver_details" {
   value = module.avs_routeserver.routeserver_details
+}
+
+output "hub_vnet_name" {
+  value = local.vnet_name
 }

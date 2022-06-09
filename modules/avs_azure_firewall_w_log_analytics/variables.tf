@@ -44,3 +44,7 @@ variable "log_analytics_name" {
   description = "Azure resource name assigned to the log analytics workspace"
 }
 
+variable "firewall_policy_name" {
+  type        = string
+  description = "Azure resource name assigned to the lfirewall policy"
+}
