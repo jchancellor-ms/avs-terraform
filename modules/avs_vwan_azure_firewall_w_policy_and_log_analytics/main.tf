@@ -69,6 +69,96 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
     }
   }
 
+  log {
+    category = "AZFWNetworkRule"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "AZFWApplicationRule"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "AZFWNatRule"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "AZFWThreatIntel"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "AZFWIdpsSignature"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "AZFWDnsQuery"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "AZFWFqdnResolveFailure"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "AZFWApplicationRuleAggregation"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "AZFWNetworkRuleAggregation"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  log {
+    category = "AZFWNatRuleAggregation"
+    enabled  = true
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
   metric {
     category = "AllMetrics"
     enabled  = true

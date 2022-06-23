@@ -28,7 +28,8 @@ write_files:
         # Example: 
         # route 0.0.0.0/0 via $nva_default_gw;
         # Routes advertised --DONT CHANGE THIS LINE--
-        route 0.0.0.0/0 via ${nva_private_ip} ;
+        #route 0.0.0.0/0 via ${nva_private_ip} ;
+        ${custom_routes}
     }
     filter TO_RS {
         bgp_next_hop = ${azfw_private_ip};

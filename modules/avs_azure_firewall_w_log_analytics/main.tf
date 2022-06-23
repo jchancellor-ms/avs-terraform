@@ -29,6 +29,7 @@ resource "azurerm_firewall" "firewall" {
   sku_tier            = var.firewall_sku_tier
   private_ip_ranges   = ["IANAPrivateRanges", ]
   tags                = var.tags
+  firewall_policy_id  = azurerm_firewall_policy.avs_base_policy.id
 
   ip_configuration {
     name                 = "firewall-ipconfiguration1"

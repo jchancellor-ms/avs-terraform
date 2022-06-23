@@ -17,6 +17,33 @@ module "avs_spoke_virtual_network" {
   tags               = var.tags
 }
 
+
+#create UDR for each subnet with 0/0 pointing to the firewall
+#create UDR for NVA subnet disabling route propogation
+resource "azurerm_route_table" "this" {
+  for_each = { for subnet in var.subnets : subnet.name => subnet }
+
+  name                          = "${each.value.name}-udr"
+  location                      = azurerm_resource_group.greenfield_test_spoke.location
+  resource_group_name           = azurerm_resource_group.greenfield_test_spoke.name
+  disable_bgp_route_propagation = true
+
+  route {
+    name                   = "default_to_firewall"
+    address_prefix         = "0.0.0.0/0"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = var.firewall_private_ip_address
+  }
+}
+
+resource "azurerm_subnet_route_table_association" "this" {
+  for_each = { for subnet in var.subnets : subnet.name => subnet }
+
+  subnet_id      = module.avs_spoke_virtual_network.subnet_ids[each.value.name].id
+  route_table_id = azurerm_route_table.this[each.value.name].id
+}
+
+
 #create peering relationships (use hub gateway/ars)
 
 data "azurerm_virtual_network" "hub_vnet" {

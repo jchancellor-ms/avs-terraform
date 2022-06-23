@@ -5,3 +5,7 @@ output "routeserver_id" {
 output "routeserver_details" {
   value = azurerm_virtual_hub.virtual_hub
 }
+
+output "virtual_hub_id" {
+  value = azurerm_virtual_hub.virtual_hub.id
+}

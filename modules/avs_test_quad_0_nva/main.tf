@@ -1,3 +1,11 @@
+locals {
+  #prefix_list = ["10.1.0.0/16", "10.2.0.0/16", "0.0.0.0/0"]
+  prefix_output = [for prefix in var.prefix_list : "route ${prefix} via ${azurerm_network_interface.bird_nic.private_ip_address};"]
+  prefix_string = join(" ", local.prefix_output)
+}
+
+
+
 
 #generate the cloud init config file
 data "template_file" "bird_config" {
@@ -10,6 +18,7 @@ data "template_file" "bird_config" {
     rs_asn          = var.route_server.virtual_router_asn
     rs_ip1          = var.route_server.virtual_router_ips[0]
     rs_ip2          = var.route_server.virtual_router_ips[1]
+    custom_routes   = local.prefix_string
   }
 }
 

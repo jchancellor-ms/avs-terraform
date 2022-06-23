@@ -15,12 +15,16 @@ locals {
   expressroute_gateway_name = "${var.prefix}-AVS-expressroute-gw-${random_string.namestring.result}"
 
   bastion_pip_name = "${var.prefix}-AVS-bastion-pip-${random_string.namestring.result}"
-  bastion_name     = "${var.prefix}-AVS-bastion-${random_string.namestring.result}"
+  bastion_name     = "${var.prefix}-bastion-${random_string.namestring.result}"
 
-  keyvault_name = "${var.prefix}-AVS-keyvault-${random_string.namestring.result}"
+  virtual_hub_name     = "${var.prefix}-AVS-virtual-hub-${random_string.namestring.result}"
+  virtual_hub_pip_name = "${var.prefix}-AVS-virtual-hub-pip-${random_string.namestring.result}"
+  route_server_name    = "${var.prefix}-AVS-virtual-route-server-${random_string.namestring.result}"
+
+  keyvault_name = "${var.prefix}-AVS-kv-${random_string.namestring.result}"
 
   jumpbox_nic_name = "${var.prefix}-AVS-Jumpbox-Nic-${random_string.namestring.result}"
-  jumpbox_name     = "${var.prefix}-AVSJump-${random_string.namestring.result}"
+  jumpbox_name     = "${var.prefix}-jmp"
 }
 
 #create a random string for uniqueness during redeployments using the same values
@@ -49,19 +53,18 @@ resource "azurerm_resource_group" "greenfield_jumpbox" {
   location = var.region
 }
 
-#Create a virtual network with gateway, bastion, and jumpbox subnets
-module "avs_virtual_network" {
-  source = "../../modules/avs_vnet_w_gateway_bastion_and_jumpbox"
+module "avs_hub_virtual_network" {
+  source = "../../modules/avs_vnet_variable_subnets"
 
-  vnet_name             = local.vnet_name
-  vnet_address_space    = var.vnet_address_space
-  rg_name               = azurerm_resource_group.greenfield_network.name
-  rg_location           = azurerm_resource_group.greenfield_network.location
-  gateway_subnet_prefix = var.gateway_subnet_prefix
-  bastion_subnet_prefix = var.bastion_subnet_prefix
-  jumpbox_subnet_prefix = var.jumpbox_subnet_prefix
-  tags                  = var.tags
+  rg_name            = azurerm_resource_group.greenfield_network.name
+  rg_location        = azurerm_resource_group.greenfield_network.location
+  vnet_name          = local.vnet_name
+  vnet_address_space = var.vnet_address_space
+  subnets            = var.subnets
+  tags               = var.tags
 }
+
+
 #deploy the expressroute gateway in the gateway subnet 
 module "avs_expressroute_gateway" {
   source = "../../modules/avs_expressroute_gateway"
@@ -75,10 +78,6 @@ module "avs_expressroute_gateway" {
   express_route_connection_name   = local.express_route_connection_name
   express_route_id                = module.avs_private_cloud.sddc_express_route_id
   express_route_authorization_key = module.avs_private_cloud.sddc_express_route_authorization_key
-
-  depends_on = [
-    module.avs_vpn_gateway
-  ]
 }
 
 
@@ -96,6 +95,7 @@ module "avs_private_cloud" {
   tags                                = var.tags
 }
 
+
 #deploy the bastion host
 module "avs_bastion" {
   source = "../../modules/avs_bastion_simple"
@@ -104,7 +104,7 @@ module "avs_bastion" {
   bastion_name      = local.bastion_name
   rg_name           = azurerm_resource_group.greenfield_jumpbox.name
   rg_location       = azurerm_resource_group.greenfield_jumpbox.location
-  bastion_subnet_id = module.avs_virtual_network.bastion_subnet_id
+  bastion_subnet_id = module.avs_hub_virtual_network.subnet_ids["AzureBastionSubnet"].id
   tags              = var.tags
 }
 
@@ -134,8 +134,20 @@ module "avs_jumpbox" {
   jumpbox_sku       = var.jumpbox_sku
   rg_name           = azurerm_resource_group.greenfield_jumpbox.name
   rg_location       = azurerm_resource_group.greenfield_jumpbox.location
-  jumpbox_subnet_id = module.avs_virtual_network.jumpbox_subnet_id
+  jumpbox_subnet_id = module.avs_hub_virtual_network.subnet_ids["JumpBoxSubnet"].id
   admin_username    = var.admin_username
   key_vault_id      = module.avs_keyvault_with_access_policy.keyvault_id
   tags              = var.tags
+}
+
+#deploy a routeserver
+module "avs_routeserver" {
+  source = "../../modules/avs_routeserver"
+
+  rg_name                = azurerm_resource_group.greenfield_network.name
+  rg_location            = azurerm_resource_group.greenfield_network.location
+  virtual_hub_name       = local.virtual_hub_name
+  virtual_hub_pip_name   = local.virtual_hub_pip_name
+  route_server_name      = local.route_server_name
+  route_server_subnet_id = module.avs_hub_virtual_network.subnet_ids["RouteServerSubnet"].id
 }

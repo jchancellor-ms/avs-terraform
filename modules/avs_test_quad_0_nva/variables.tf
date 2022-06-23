@@ -43,3 +43,8 @@ variable "virtual_hub_id" {
   type        = string
   description = "the resource id for the virtual hub for the routeserver being peered to the nva for bgp"
 }
+
+variable "prefix_list" {
+  type        = list(string)
+  description = "A list of prefixes to publish routes through the firewall IP address"
+}

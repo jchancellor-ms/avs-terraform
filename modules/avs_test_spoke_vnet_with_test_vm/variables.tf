@@ -50,3 +50,8 @@ variable "key_vault_id" {
   type        = string
   description = "the resource id for the keyvault where the password will be stored"
 }
+
+variable "firewall_private_ip_address" {
+  type        = string
+  description = "The private IP address of the firewall target for the spoke default routes"
+}

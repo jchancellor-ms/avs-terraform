@@ -10,7 +10,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "outbound_internet_test
     action   = "Allow"
     rule {
       name                  = "outbound_internet_and_branch_to_branch"
-      protocols             = ["TCP", "UDP"]
+      protocols             = ["TCP", "UDP", "ICMP"]
       source_addresses      = var.private_range_prefixes
       destination_addresses = ["*"]
       destination_ports     = ["80", "443", "53", "123", "3389", "22"]
@@ -31,7 +31,7 @@ resource "azurerm_firewall_network_rule_collection" "outbound_internet_test_coll
     source_addresses      = var.private_range_prefixes
     destination_ports     = ["80", "443", "53", "123", "3389", "22"]
     destination_addresses = ["*"]
-    protocols             = ["TCP", "UDP"]
+    protocols             = ["TCP", "UDP", "ICMP"]
   }
 }
 
