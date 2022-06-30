@@ -4,12 +4,16 @@ resource "azurerm_local_network_gateway" "this_local_gateway_0" {
   location            = var.rg_location
   resource_group_name = var.rg_name
   gateway_address     = var.remote_gateway_address_0
+  address_space       = ["${var.local_gateway_bgp_ip}/32"]
+
+
   bgp_settings {
     asn                 = var.remote_asn
-    bgp_peering_address = var.bgp_peering_address_0
+    bgp_peering_address = var.local_gateway_bgp_ip
   }
 }
 
+/*
 resource "azurerm_local_network_gateway" "this_local_gateway_1" {
   name                = var.local_gateway_name_1
   location            = var.rg_location
@@ -20,9 +24,10 @@ resource "azurerm_local_network_gateway" "this_local_gateway_1" {
     bgp_peering_address = var.bgp_peering_address_1
   }
 }
+*/
 
 #create the remote connections 
-resource "azurerm_virtual_network_gateway_connection" "on_prem_to_avs_vwan_0" {
+resource "azurerm_virtual_network_gateway_connection" "on_prem_to_avs_hub_0" {
   name                = var.vnet_gateway_connection_name_0
   location            = var.rg_location
   resource_group_name = var.rg_name
@@ -35,7 +40,8 @@ resource "azurerm_virtual_network_gateway_connection" "on_prem_to_avs_vwan_0" {
   shared_key = var.shared_key
 }
 
-resource "azurerm_virtual_network_gateway_connection" "on_prem_to_avs_vwan_1" {
+/*
+resource "azurerm_virtual_network_gateway_connection" "on_prem_to_avs_hub_1" {
   name                = var.vnet_gateway_connection_name_1
   location            = var.rg_location
   resource_group_name = var.rg_name
@@ -47,3 +53,4 @@ resource "azurerm_virtual_network_gateway_connection" "on_prem_to_avs_vwan_1" {
 
   shared_key = var.shared_key
 }
+*/

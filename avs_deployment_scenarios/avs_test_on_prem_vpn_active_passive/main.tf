@@ -66,7 +66,7 @@ resource "azurerm_subnet_route_table_association" "jump_subnet_association" {
 }
 
 module "on_prem_vpn_gateway" {
-  source = "../../modules/avs_vpn_gateway_active_passive"
+  source = "../../modules/avs_vpn_gateway"
 
   vpn_pip_name_1    = local.vpn_pip_name_1
   vpn_pip_name_2    = local.vpn_pip_name_2

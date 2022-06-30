@@ -17,3 +17,7 @@ output "csr1_avs_facing_ip" {
 output "asn" {
   value = var.asn
 }
+
+output "config_file" {
+  value = data.template_file.node_config.rendered
+}

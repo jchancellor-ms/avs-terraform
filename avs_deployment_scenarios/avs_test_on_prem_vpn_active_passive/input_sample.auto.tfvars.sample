@@ -1,0 +1,20 @@
+#This file is a sample tfvars input for this module. 
+#Copy this file to your root module, populate the file with the target deployment values and remove the .sample extension.
+
+
+prefix                = "on-prem-1"
+region                = "Southeast Asia"
+vnet_address_space    = ["10.2.0.0/16"]
+gateway_subnet_prefix = ["10.2.1.0/24"]
+bastion_subnet_prefix = ["10.2.2.0/24"]
+jumpbox_subnet_prefix = ["10.2.3.0/24"]
+
+vpn_gateway_sku = "VpnGw2"
+jumpbox_sku              = "Standard_D2as_v4"
+admin_username           = "azureuser"
+asn                      = 65516
+
+tags = {
+environment = "Dev"
+CreatedBy   = "Terraform"
+}

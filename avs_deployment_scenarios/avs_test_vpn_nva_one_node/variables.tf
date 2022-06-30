@@ -20,27 +20,36 @@ variable "subnets" {
   }))
 }
 
-variable "expressroute_gateway_sku" {
+variable "csr_bgp_ip" {
   type        = string
-  description = "The sku for the AVS expressroute gateway"
-  default     = "Standard"
+  description = "BGP peer IP address"
 }
 
-variable "sddc_sku" {
+variable "csr_tunnel_cidr" {
   type        = string
-  description = "The sku value for the AVS SDDC management cluster nodes"
-  default     = "av36"
+  description = "CIDR to use for the CSR tunnel IPs.  This is the IP subnet CIDR that is the internally routable IPs for the tunnel"
 }
 
-variable "management_cluster_size" {
+variable "csr_subnet_name" {
+  type        = string
+  description = "Name of the subnet where the CSR is deployed"
+}
+
+variable "remote_bgp_peer_ips" {
+  type        = list(string)
+  description = "Remote bgp peer ip for active node 0"
+}
+
+variable "pre_shared_key" {
+  type        = string
+  description = "shared key for the vpn connection"
+  sensitive   = true
+}
+
+variable "asn" {
   type        = number
-  description = "The number of nodes to include in the management cluster"
-  default     = 3
-}
-
-variable "avs_network_cidr" {
-  type        = string
-  description = "The full /22 network CIDR range summary for the private cloud managed components"
+  description = "The ASN for bgp on the VPN gateway"
+  default     = "65516"
 }
 
 variable "jumpbox_sku" {
@@ -57,4 +66,14 @@ variable "admin_username" {
 variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"
+}
+
+variable "remote_gw_pubip0" {
+  type        = string
+  description = "Remote peer public IP address 0"
+}
+
+variable "remote_gw_pubip1" {
+  type        = string
+  description = "Remote peer public IP address 1"
 }

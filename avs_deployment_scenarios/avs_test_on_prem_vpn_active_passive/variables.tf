@@ -13,34 +13,31 @@ variable "vnet_address_space" {
   description = "List of CIDR ranges assigned to the hub VNET.  Typically one larger range."
 }
 
-variable "subnets" {
-  type = list(object({
-    name           = string
-    address_prefix = list(string)
-  }))
+variable "gateway_subnet_prefix" {
+  type        = list(string)
+  description = "A list of subnet prefix CIDR values used for the gateway subnet address space"
 }
 
-variable "expressroute_gateway_sku" {
+variable "bastion_subnet_prefix" {
+  type        = list(string)
+  description = "A list of subnet prefix CIDR values used for the bastion subnet address space"
+}
+
+variable "jumpbox_subnet_prefix" {
+  type        = list(string)
+  description = "A list of subnet prefix CIDR values used for the jumpbox subnet address space"
+}
+
+variable "vpn_gateway_sku" {
   type        = string
-  description = "The sku for the AVS expressroute gateway"
-  default     = "Standard"
+  description = "The sku for the AVS vpn gateway"
+  default     = "VpnGw2"
 }
 
-variable "sddc_sku" {
-  type        = string
-  description = "The sku value for the AVS SDDC management cluster nodes"
-  default     = "av36"
-}
-
-variable "management_cluster_size" {
+variable "asn" {
   type        = number
-  description = "The number of nodes to include in the management cluster"
-  default     = 3
-}
-
-variable "avs_network_cidr" {
-  type        = string
-  description = "The full /22 network CIDR range summary for the private cloud managed components"
+  description = "The ASN for bgp on the VPN gateway"
+  default     = "65516"
 }
 
 variable "jumpbox_sku" {

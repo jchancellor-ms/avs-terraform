@@ -26,35 +26,34 @@ variable "expressroute_gateway_sku" {
   default     = "Standard"
 }
 
-variable "sddc_sku" {
+variable "vpn_gateway_sku" {
   type        = string
-  description = "The sku value for the AVS SDDC management cluster nodes"
-  default     = "av36"
+  description = "The sku for the AVS vpn gateway"
+  default     = "VpnGw2"
 }
 
-variable "management_cluster_size" {
+variable "asn" {
   type        = number
-  description = "The number of nodes to include in the management cluster"
-  default     = 3
+  description = "The ASN for bgp on the VPN gateway"
+  default     = "65515"
 }
 
-variable "avs_network_cidr" {
-  type        = string
-  description = "The full /22 network CIDR range summary for the private cloud managed components"
-}
-
-variable "jumpbox_sku" {
-  type        = string
-  description = "The sku for the jumpbox vm"
-  default     = "Standard_D2as_v4"
-}
-
-variable "admin_username" {
-  type        = string
-  description = "The username for the jumpbox admin login"
+variable "email_addresses" {
+  type        = list(string)
+  description = "A list of email addresses where service health alerts will be sent"
 }
 
 variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"
+}
+
+variable "sddc_name" {
+  type        = string
+  description = "Name of the existing private cloud"
+}
+
+variable "sddc_rg_name" {
+  type        = string
+  description = "resource group name of the existing private cloud"
 }

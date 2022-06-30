@@ -19,6 +19,11 @@ variable "remote_asn" {
   description = "The BGP ASN for the remote VPN"
 }
 
+variable "local_gateway_bgp_ip" {
+  type        = string
+  description = "the BGP peer IP for the remote VPN"
+}
+
 variable "local_gateway_name_0" {
   type        = string
   description = "The azure resource name"
@@ -51,12 +56,12 @@ variable "remote_gateway_address_1" {
 
 variable "bgp_peering_address_0" {
   type        = string
-  description = "The BGP peering IP address for the remote VPN side 0"
+  description = "The BGP peering IP address for the hub VPN side 0"
 }
 
 variable "bgp_peering_address_1" {
   type        = string
-  description = "The BGP peering IP address for the remote VPN side 1"
+  description = "The BGP peering IP address for the hub VPN side 1"
 }
 
 variable "shared_key" {
