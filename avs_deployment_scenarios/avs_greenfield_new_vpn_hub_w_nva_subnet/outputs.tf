@@ -27,24 +27,6 @@ output "sddc_provisioning_subnet_cidr" {
   value = module.avs_private_cloud.sddc_provisioning_subnet_cidr
 }
 
-/*
-output "firewall_id" {
-  value = module.avs_azure_firewall.firewall_id
-}
-
-output "firewall_private_ip_address" {
-  value = module.avs_azure_firewall.firewall_private_ip_address
-}
-
-output "firewall_name" {
-  value = module.avs_azure_firewall.firewall_name
-}
-
-output "firewall_public_ip" {
-  value = module.avs_azure_firewall.firewall_public_ip
-}
-*/
-
 output "vpn_gateway_id" {
   value = module.avs_vpn_gateway.vpn_gateway_id
 }

@@ -39,7 +39,7 @@ resource "azurerm_express_route_connection" "avs_private_cloud_connection" {
   enable_internet_security         = var.all_branch_traffic_through_firewall #publish a default route to the internet through Azure Firewall when true
 }
 
-#add a quad 0 route pointing to the firewall to the default route table
+#add a 0/0 route pointing to the firewall in the default route table
 resource "azurerm_virtual_hub_route_table_route" "default_secure_internet" {
   count          = var.all_branch_traffic_through_firewall ? 1 : 0 #push a default route if routing branch traffic to azfw in a secure hub
   route_table_id = azurerm_virtual_hub.vwan_hub.default_route_table_id

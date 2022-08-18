@@ -1,33 +1,26 @@
 # Create local variable derived from an input prefix or modify for customer naming
 locals {
   #update naming convention with target naming convention if different
-  private_cloud_rg_name = "${var.prefix}-PrivateCloud-${random_string.namestring.result}"
-  network_rg_name       = "${var.prefix}-Network-${random_string.namestring.result}"
-
-  vnet_name = "${var.prefix}-VirtualNetwork-${random_string.namestring.result}"
-
+  private_cloud_rg_name               = "${var.prefix}-PrivateCloud-${random_string.namestring.result}"
+  network_rg_name                     = "${var.prefix}-Network-${random_string.namestring.result}"
+  vnet_name                           = "${var.prefix}-VirtualNetwork-${random_string.namestring.result}"
   sddc_name                           = "${var.prefix}-SDDC-${random_string.namestring.result}"
   expressroute_authorization_key_name = "${var.prefix}-AVS-ExpressrouteAuthKey-${random_string.namestring.result}"
   express_route_connection_name       = "${var.prefix}-AVS-ExpressrouteConnection-${random_string.namestring.result}"
-
-  expressroute_pip_name     = "${var.prefix}-AVS-expressroute-gw-pip-${random_string.namestring.result}"
-  expressroute_gateway_name = "${var.prefix}-AVS-expressroute-gw-${random_string.namestring.result}"
-
-  vpn_pip_name_1   = "${var.prefix}-AVS-vpn-gw-pip-1-${random_string.namestring.result}"
-  vpn_pip_name_2   = "${var.prefix}-AVS-vpn-gw-pip-2-${random_string.namestring.result}"
-  vpn_gateway_name = "${var.prefix}-AVS-vpn-gw-${random_string.namestring.result}"
-
-  firewall_pip_name  = "${var.prefix}-AVS-firewall-pip-${random_string.namestring.result}"
-  firewall_name      = "${var.prefix}-AVS-firewall-${random_string.namestring.result}"
-  log_analytics_name = "${var.prefix}-AVS-log-analytics-${random_string.namestring.result}"
-
-  virtual_hub_name     = "${var.prefix}-AVS-virtual-hub-${random_string.namestring.result}"
-  virtual_hub_pip_name = "${var.prefix}-AVS-virtual-hub-pip-${random_string.namestring.result}"
-  route_server_name    = "${var.prefix}-AVS-virtual-route-server-${random_string.namestring.result}"
-
-  action_group_name         = "${var.prefix}-AVS-action-group-${random_string.namestring.result}"
-  action_group_shortname    = "avs-sddc-sh"
-  service_health_alert_name = "${var.prefix}-AVS-service-health-alert-${random_string.namestring.result}"
+  expressroute_pip_name               = "${var.prefix}-AVS-expressroute-gw-pip-${random_string.namestring.result}"
+  expressroute_gateway_name           = "${var.prefix}-AVS-expressroute-gw-${random_string.namestring.result}"
+  vpn_pip_name_1                      = "${var.prefix}-AVS-vpn-gw-pip-1-${random_string.namestring.result}"
+  vpn_pip_name_2                      = "${var.prefix}-AVS-vpn-gw-pip-2-${random_string.namestring.result}"
+  vpn_gateway_name                    = "${var.prefix}-AVS-vpn-gw-${random_string.namestring.result}"
+  firewall_pip_name                   = "${var.prefix}-AVS-firewall-pip-${random_string.namestring.result}"
+  firewall_name                       = "${var.prefix}-AVS-firewall-${random_string.namestring.result}"
+  log_analytics_name                  = "${var.prefix}-AVS-log-analytics-${random_string.namestring.result}"
+  virtual_hub_name                    = "${var.prefix}-AVS-virtual-hub-${random_string.namestring.result}"
+  virtual_hub_pip_name                = "${var.prefix}-AVS-virtual-hub-pip-${random_string.namestring.result}"
+  route_server_name                   = "${var.prefix}-AVS-virtual-route-server-${random_string.namestring.result}"
+  service_health_alert_name           = "${var.prefix}-AVS-service-health-alert-${random_string.namestring.result}"
+  action_group_name                   = "${var.prefix}-AVS-action-group-${random_string.namestring.result}"
+  action_group_shortname              = "avs-sddc-sh"
 }
 
 #create a random string for uniqueness during redeployments using the same values
@@ -96,7 +89,6 @@ module "avs_private_cloud" {
   expressroute_authorization_key_name = local.expressroute_authorization_key_name
   tags                                = var.tags
 }
-
 
 #deploy a VPNGateway
 module "avs_vpn_gateway" {

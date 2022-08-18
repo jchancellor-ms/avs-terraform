@@ -22,7 +22,6 @@ locals {
   virtual_hub_name     = "${var.prefix}-AVS-virtual-hub-${random_string.namestring.result}"
   virtual_hub_pip_name = "${var.prefix}-AVS-virtual-hub-pip-${random_string.namestring.result}"
   route_server_name    = "${var.prefix}-AVS-virtual-route-server-${random_string.namestring.result}"
-
 }
 
 

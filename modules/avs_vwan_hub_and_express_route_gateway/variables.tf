@@ -38,3 +38,20 @@ variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"
 }
+
+variable "all_branch_traffic_through_firewall" {
+  type        = bool
+  description = "This flag determines whether to enable the vwan hub to route all branch traffic through the virtual hub azure firewall."
+  default     = false
+}
+
+variable "azure_firewall_id" {
+  type        = string
+  description = "The firewall ID associated to this hub when it is a secure hub"
+  default     = "null"
+}
+
+variable "private_range_prefixes" {
+  type        = list(string)
+  description = "List of rfc1918 prefixes to next-hop to the firewall as part of the default route table default route"
+}
