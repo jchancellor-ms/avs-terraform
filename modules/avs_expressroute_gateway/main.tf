@@ -22,6 +22,7 @@ resource "azurerm_virtual_network_gateway" "gateway" {
   }
 }
 
+
 resource "azurerm_virtual_network_gateway_connection" "avs" {
   name                = var.express_route_connection_name
   location            = var.rg_location

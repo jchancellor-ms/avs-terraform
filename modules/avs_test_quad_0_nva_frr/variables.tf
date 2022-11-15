@@ -16,7 +16,7 @@ variable "nva_subnet_id" {
 
 variable "nva_name" {
   type        = string
-  description = "name for the bird nva"
+  description = "name for the frr nva"
 }
 
 variable "azfw_private_ip" {
@@ -44,8 +44,12 @@ variable "virtual_hub_id" {
   description = "the resource id for the virtual hub for the routeserver being peered to the nva for bgp"
 }
 
-variable "prefix_list" {
-  type        = list(string)
-  description = "A list of prefixes to publish routes through the firewall IP address"
+variable "route_server_subnet_prefix" {
+  type        = string
+  description = "The prefix of the route server subnet"
 }
 
+variable "nva_subnet_prefix" {
+  type        = string
+  description = "The prefix of the nva subnet"
+}
