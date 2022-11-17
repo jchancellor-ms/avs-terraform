@@ -31,7 +31,7 @@ resource "azurerm_vmware_private_cloud" "privatecloud" {
   }
 
   network_subnet_cidr         = var.avs_network_cidr
-  internet_connection_enabled = false
+  internet_connection_enabled = var.internet_enabled
   nsxt_password               = random_password.nsxt.result
   vcenter_password            = random_password.vcenter.result
 

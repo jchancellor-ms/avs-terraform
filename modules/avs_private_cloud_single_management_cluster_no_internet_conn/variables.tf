@@ -39,3 +39,9 @@ variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"
 }
+
+variable "internet_enabled" {
+  type        = bool
+  description = "set the internet snat to on or off"
+  default     = false
+}

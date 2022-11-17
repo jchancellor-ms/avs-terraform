@@ -1,28 +1,24 @@
 locals {
   #prefix_list = ["10.1.0.0/16", "10.2.0.0/16", "0.0.0.0/0"]
-  #prefix_output = [for prefix in var.prefix_list : "route ${prefix} via ${azurerm_network_interface.frr_nic.private_ip_address};"]
-  #prefix_string = join(" ", local.prefix_output)
-  gateway = cidrhost(var.nva_subnet_prefix, 1)
+  prefix_output = [for prefix in var.prefix_list : "route ${prefix} via ${azurerm_network_interface.vmware_nic.private_ip_address};"]
+  prefix_string = join(" ", local.prefix_output)
 }
 
 
 
 
 #generate the cloud init config file
-data "template_file" "frr_config" {
-  template = file("${path.module}/templates/frr_cloud_init.yaml")
+data "template_file" "vmware_config" {
+  template = file("${path.module}/templates/vmware_cloud_init.yaml")
 
   vars = {
-    azfw_private_ip  = var.azfw_private_ip
-    nva_private_ip   = azurerm_network_interface.frr_nic.private_ip_address
-    nva_asn          = var.nva_asn
-    rs_asn           = var.route_server.virtual_router_asn
-    rs_ip1           = var.route_server.virtual_router_ips[0]
-    rs_ip2           = var.route_server.virtual_router_ips[1]
-    rs_subnet_prefix = var.route_server_subnet_prefix
-    hostname         = lower(var.nva_name)
-    gateway          = local.gateway
-    #custom_routes   = local.prefix_string
+    azfw_private_ip = var.azfw_private_ip
+    nva_private_ip  = azurerm_network_interface.vmware_nic.private_ip_address
+    nva_asn         = var.nva_asn
+    rs_asn          = var.route_server.virtual_router_asn
+    rs_ip1          = var.route_server.virtual_router_ips[0]
+    rs_ip2          = var.route_server.virtual_router_ips[1]
+    custom_routes   = local.prefix_string
   }
 }
 
@@ -34,7 +30,7 @@ data "template_cloudinit_config" "config" {
   part {
     filename     = "init.cfg"
     content_type = "text/cloud-config"
-    content      = data.template_file.frr_config.rendered
+    content      = data.template_file.vmware_config.rendered
   }
 }
 
@@ -45,7 +41,7 @@ resource "random_password" "admin_password" {
   lower   = true
 }
 
-resource "azurerm_network_interface" "frr_nic" {
+resource "azurerm_network_interface" "vmware_nic" {
   name                = "${var.nva_name}-nic-1"
   location            = var.rg_location
   resource_group_name = var.rg_name
@@ -57,7 +53,7 @@ resource "azurerm_network_interface" "frr_nic" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "frr_route_generator" {
+resource "azurerm_linux_virtual_machine" "vmware_route_generator" {
   name                            = var.nva_name
   resource_group_name             = var.rg_name
   location                        = var.rg_location
@@ -68,7 +64,7 @@ resource "azurerm_linux_virtual_machine" "frr_route_generator" {
   custom_data                     = data.template_cloudinit_config.config.rendered
 
   network_interface_ids = [
-    azurerm_network_interface.frr_nic.id,
+    azurerm_network_interface.vmware_nic.id,
   ]
 
   os_disk {
@@ -76,26 +72,12 @@ resource "azurerm_linux_virtual_machine" "frr_route_generator" {
     storage_account_type = "Standard_LRS"
   }
 
-  plan {
-    name      = "centos-8-3-free"
-    product   = "centos-8-3-free"
-    publisher = "cognosys"
-  }
-
   source_image_reference {
-    publisher = "cognosys"
-    offer     = "centos-8-3-free"
-    sku       = "centos-8-3-free"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
-
-  #avoid rebuilding with every apply as custom_data is treated as a sensitive value
-  lifecycle {
-    ignore_changes = [
-      custom_data
-    ]
-  }
-
 }
 
 #write secret to keyvault
@@ -123,5 +105,5 @@ resource "azurerm_virtual_hub_bgp_connection" "nva_vm" {
   name           = "${var.nva_name}-bgp-connection"
   virtual_hub_id = var.virtual_hub_id
   peer_asn       = var.nva_asn
-  peer_ip        = azurerm_network_interface.frr_nic.private_ip_address
+  peer_ip        = azurerm_network_interface.vmware_nic.private_ip_address
 }

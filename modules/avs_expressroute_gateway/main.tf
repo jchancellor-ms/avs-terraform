@@ -33,4 +33,9 @@ resource "azurerm_virtual_network_gateway_connection" "avs" {
   virtual_network_gateway_id = azurerm_virtual_network_gateway.gateway.id
   express_route_circuit_id   = var.express_route_id
   authorization_key          = var.express_route_authorization_key
+  lifecycle {
+    ignore_changes = [
+      express_route_circuit_id
+    ]
+  }
 }

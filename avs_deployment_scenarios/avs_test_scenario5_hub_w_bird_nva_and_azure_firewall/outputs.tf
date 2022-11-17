@@ -25,3 +25,11 @@ output "hub_resource_group" {
 output "hub_gateway_id" {
   value = module.avs_expressroute_gateway.expressroute_gateway_id
 }
+
+output "vnet_name" {
+  value = local.vnet_name
+}
+
+output "vnet_id" {
+  value = module.avs_hub_virtual_network.vnet_id
+}

@@ -1,0 +1,39 @@
+nsxt_root               = "TNT##"
+t1_gateway_display_name = "vm_t1_gateway"
+dhcp_profile = {
+  description      = "DHCP Profile"
+  display_name     = "vm_dhcp_profile"
+  server_addresses = "192.168.0.2/27"
+}
+vm_segment = {
+  description  = "test vm segment"
+  display_name = "test_vm_segment"
+  subnet = {
+    cidr        = "192.168.1.1/24"
+    dhcp_ranges = ["192.168.1.4-192.168.1.20"]
+    dhcp_v4_config = {
+      server_address = "192.168.0.2/27"
+      lease_time     = 86400
+      dns_servers    = ["10.179.0.192"]
+    }
+  }
+  tag = {
+    scope = "LevelUp"
+    tag   = "NOV22"
+  }
+}
+ovf_content_library_name = "vm_content_library"
+ovf_template_name        = "photon_4.0"
+ovf_template_description = "Simple photon vm template for testing"
+ovf_template_url         = "https://packages.vmware.com/photon/4.0/Rev2/ova/photon-ova-4.0-c001795b80.ova"
+# These values default to the AVS defaults. Override them if needed
+vsphere_datacenter = "SDDC-Datacenter"
+vsphere_datastore  = "vsanDatastore"
+vsphere_cluster    = "Cluster-1"
+
+nsx_ip           = "10.1.1.3"
+nsx_user         = "cloudadmin"
+nsx_password     = "<password>"
+vsphere_ip       = "10.1.1.2"
+vsphere_user     = "cloudadmin@vsphere.local"
+vsphere_password = "<password>"

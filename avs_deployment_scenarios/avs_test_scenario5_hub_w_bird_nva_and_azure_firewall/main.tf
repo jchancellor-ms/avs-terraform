@@ -148,6 +148,14 @@ resource "azurerm_vmware_express_route_authorization" "expressrouteauthkey" {
   depends_on = [
     data.azurerm_vmware_private_cloud.test-sddc
   ]
+  timeouts {
+    create = "30m"
+  }
+  lifecycle {
+    ignore_changes = [
+      private_cloud_id
+    ]
+  }
 }
 
 
@@ -183,6 +191,10 @@ resource "azurerm_route_table" "firewall_udr" {
 resource "azurerm_subnet_route_table_association" "firewall_subnet_rt" {
   subnet_id      = module.avs_hub_virtual_network.subnet_ids["AzureFirewallSubnet"].id
   route_table_id = azurerm_route_table.firewall_udr.id
+
+  depends_on = [
+    azurerm_route.firewall_internet_route
+  ]
 }
 
 resource "azurerm_route" "firewall_internet_route" {
