@@ -1,61 +1,6 @@
 #cloud-config
-write_files:
-- content: |
-    terraform {
-        required_providers {
-            nsxt = {
-            source = "vmware/nsxt"
-            }
-            vsphere = {
-            source = "hashicorp/vsphere"
-            }
-        }
-    }
-    
-    module "deploy_vmware_vms" {
-        source = ${tf_template_github_source}
-
-        nsxt_root               = "${nsxt_root}"
-        t1_gateway_display_name = "${t1_gateway_display_name}"
-        dhcp_profile = {
-            description      = "DHCP Profile"
-            display_name     = "vm_dhcp_profile"
-            server_addresses = "${dhcp_profile_server_addresses}"
-        }
-        vm_segment = {
-            description  = "test vm segment"
-            display_name = "${vm_segment_display_name}"
-            subnet = {
-                cidr        = "${vm_segment_cidr_prefix}"
-                dhcp_ranges = ["${vm_segment_dhcp_range}""]
-                dhcp_v4_config = {
-                    server_address = "${dhcp_profile_server_addresses}"
-                    lease_time     = 86400
-                    dns_servers    = ["${avs_dns_forwarder_address}"]
-                }
-            }
-            tag = {
-                scope = "LevelUp"
-                tag   = "NOV22"
-            }
-        }
-        ovf_content_library_name = "vm_content_library"
-        ovf_template_name        = "photon_4.0"
-        ovf_template_description = "Simple photon vm template for testing"
-        ovf_template_url         = "${ovf_template_url}"
-        # These values default to the AVS defaults. Override them if needed
-        vsphere_datacenter = "SDDC-Datacenter"
-        vsphere_datastore  = "vsanDatastore"
-        vsphere_cluster    = "Cluster-1" 
-        nsx_ip           = "${nsx_ip}"
-        nsx_user         = "${nsx_user}"
-        nsx_password     = "${nsx_password}"
-        vsphere_ip       = "${vsphere_ip}"
-        vsphere_user     = "${vsphere_user}"
-        vsphere_password = "${vsphere_password}"
-
-    }
-  path: /tmp/terraform/main.tf
-
 runcmd:
-  - [ dnf, install, frr, -y ]
+  - [ sudo, apt-get, update ]
+  - [ sudo, apt-get, upgrade, -y ]
+  - [ sudo, snap, install, terraform, --classic ]
+  

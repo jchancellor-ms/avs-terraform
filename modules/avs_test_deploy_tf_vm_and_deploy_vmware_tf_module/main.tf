@@ -1,25 +1,27 @@
-locals {
-  #prefix_list = ["10.1.0.0/16", "10.2.0.0/16", "0.0.0.0/0"]
-  prefix_output = [for prefix in var.prefix_list : "route ${prefix} via ${azurerm_network_interface.vmware_nic.private_ip_address};"]
-  prefix_string = join(" ", local.prefix_output)
-}
-
-
-
 
 #generate the cloud init config file
 data "template_file" "vmware_config" {
   template = file("${path.module}/templates/vmware_cloud_init.yaml")
-
+/*
   vars = {
-    azfw_private_ip = var.azfw_private_ip
-    nva_private_ip  = azurerm_network_interface.vmware_nic.private_ip_address
-    nva_asn         = var.nva_asn
-    rs_asn          = var.route_server.virtual_router_asn
-    rs_ip1          = var.route_server.virtual_router_ips[0]
-    rs_ip2          = var.route_server.virtual_router_ips[1]
-    custom_routes   = local.prefix_string
+    tf_template_github_source     = var.tf_template_github_source
+    nsxt_root                     = var.nsx_root
+    t1_gateway_display_name       = var.t1_gateway_display_name
+    dhcp_profile_server_addresses = var.dhcp_profile_server_addresses
+    vm_segment_display_name       = var.vm_segment_display_name
+    vm_segment_cidr_prefix        = var.vm_segment_cidr_prefix
+    vm_segment_dhcp_range         = var.vm_segment_dhcp_range
+    dhcp_profile_server_addresses = var.dhcp_profile_server_addresses
+    avs_dns_forwarder_address     = var.avs_dns_forwarder_address
+    ovf_template_url              = var.ovf_template_url
+    nsx_ip                        = var.nsx_ip
+    nsx_user                      = var.nsx_user
+    nsx_password                  = var.nsx_password
+    vsphere_ip                    = var.vsphere_ip
+    vsphere_user                  = var.vsphere_user
+    vsphere_password              = var.vsphere_password
   }
+*/
 }
 
 data "template_cloudinit_config" "config" {
@@ -87,23 +89,3 @@ resource "azurerm_key_vault_secret" "admin_password" {
   key_vault_id = var.key_vault_id
 }
 
-#create UDR for NVA subnet disabling route propogation
-resource "azurerm_route_table" "nva_udr" {
-  name                          = "${var.nva_name}-udr"
-  location                      = var.rg_location
-  resource_group_name           = var.rg_name
-  disable_bgp_route_propagation = true
-}
-
-resource "azurerm_subnet_route_table_association" "nva_subnet_rt" {
-  subnet_id      = var.nva_subnet_id
-  route_table_id = azurerm_route_table.nva_udr.id
-}
-
-#create routeserver peering
-resource "azurerm_virtual_hub_bgp_connection" "nva_vm" {
-  name           = "${var.nva_name}-bgp-connection"
-  virtual_hub_id = var.virtual_hub_id
-  peer_asn       = var.nva_asn
-  peer_ip        = azurerm_network_interface.vmware_nic.private_ip_address
-}

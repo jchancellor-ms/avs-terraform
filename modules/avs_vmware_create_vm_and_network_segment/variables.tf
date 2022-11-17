@@ -8,10 +8,12 @@ variable "t1_gateway_display_name" {
   description = "Display name for the new T1 gateway"
 }
 
+#check this
 variable "dhcp_profile" {
   description = "map of strings used to create the dhcp profile"
 }
 
+#check this
 variable "vm_segment" {
   description = "map of strings and maps with vm segment configuration details"
 }
