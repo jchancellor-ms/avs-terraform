@@ -21,7 +21,7 @@ module "avs_vmware_create_new_segment" {
 module "avs_vmware_create_test_vm" {
   source                       = "../avs_vmware_create_test_vm"
   vsphere_datacenter           = var.vsphere_datacenter
-  vsphere_datastore            = var.vsphere.datastore
+  vsphere_datastore            = var.vsphere_datastore
   ovf_content_library_name     = var.ovf_content_library_name
   ovf_template_name            = var.ovf_template_name
   ovf_template_description     = var.ovf_template_description
