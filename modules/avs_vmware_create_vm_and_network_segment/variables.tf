@@ -90,6 +90,6 @@ variable "vsphere_password" {
   sensitive   = true
 }
 variable "vm_name" {
-    type = string
-    description = "name for the new test vm"
+  type        = string
+  description = "name for the new test vm"
 }

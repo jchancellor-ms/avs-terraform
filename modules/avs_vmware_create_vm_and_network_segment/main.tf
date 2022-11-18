@@ -16,6 +16,9 @@ module "avs_vmware_create_new_segment" {
   nsx_ip          = var.nsx_ip
   nsx_user        = var.nsx_user
   nsx_password    = var.nsx_password
+  depends_on = [
+    module.avs_vmware_create_new_t1_gateway
+  ]
 }
 
 module "avs_vmware_create_test_vm" {
@@ -32,4 +35,7 @@ module "avs_vmware_create_test_vm" {
   vsphere_user                 = var.vsphere_user
   vsphere_password             = var.vsphere_password
   vm_name                      = var.vm_name
+  depends_on = [
+    module.avs_vmware_create_new_segment
+  ]
 }
