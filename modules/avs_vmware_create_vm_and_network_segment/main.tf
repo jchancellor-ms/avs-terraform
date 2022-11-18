@@ -16,6 +16,11 @@ module "avs_vmware_create_new_segment" {
   ]
 }
 
+resource "time_sleep" "wait_90_seconds" {
+  depends_on      = [module.avs_vmware_create_new_segment]
+  create_duration = "90s"
+}
+
 module "avs_vmware_create_test_vm" {
   source                       = "../avs_vmware_create_test_vm"
   vsphere_datacenter           = var.vsphere_datacenter
@@ -27,8 +32,8 @@ module "avs_vmware_create_test_vm" {
   vsphere_cluster              = var.vsphere_cluster
   network_segment_display_name = module.avs_vmware_create_new_segment.vm_segment_display_name
   vm_name                      = var.vm_name
-  
+
   depends_on = [
-    module.avs_vmware_create_new_segment
+    time_sleep.wait_90_seconds
   ]
 }

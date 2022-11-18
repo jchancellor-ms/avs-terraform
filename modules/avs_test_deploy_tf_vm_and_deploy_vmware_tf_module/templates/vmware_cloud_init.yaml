@@ -60,6 +60,6 @@ runcmd:
   - [ sudo, apt-get, update ]
   - [ sudo, apt-get, upgrade, -y ]
   - [ sudo, snap, install, terraform, --classic ]
-  - [ cd, /tmp, /terraform ]
+  - [ cd, /tmp/terraform ]
   - [ terraform, init ]
   - [ terraform, apply, -auto-approve ]
