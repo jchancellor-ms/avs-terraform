@@ -42,21 +42,6 @@ variable "ovf_template_url" {
   description = "URL of the OVA or OVF being used as the template for the VM"
 }
 
-variable "vsphere_ip" {
-  description = "vsphere IP address"
-  type        = string
-  sensitive   = true
-}
-variable "vsphere_user" {
-  description = "vsphere administrator username"
-  type        = string
-  sensitive   = true
-}
-variable "vsphere_password" {
-  description = "vsphere administrator password"
-  type        = string
-  sensitive   = true
-}
 variable "vm_name" {
   type        = string
   description = "name for the new test vm"
