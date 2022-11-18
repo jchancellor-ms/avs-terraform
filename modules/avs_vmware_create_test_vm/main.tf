@@ -42,7 +42,7 @@ resource "vsphere_content_library_item" "content_library_item" {
 resource "vsphere_virtual_machine" "labvm01" {
   name             = var.vm_name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
-  datacenter_id    = data.vsphere_datacenter.datacenter.id
+  #datacenter_id    = data.vsphere_datacenter.datacenter.id
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus         = 4
   memory           = 16384
