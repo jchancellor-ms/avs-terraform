@@ -55,7 +55,7 @@ resource "azurerm_network_interface" "vmware_nic" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "vmware_route_generator" {
+resource "azurerm_linux_virtual_machine" "vmware_terraform_host" {
   name                            = var.nva_name
   resource_group_name             = var.rg_name
   location                        = var.rg_location
