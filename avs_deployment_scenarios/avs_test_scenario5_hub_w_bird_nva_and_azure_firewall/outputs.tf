@@ -33,3 +33,11 @@ output "vnet_name" {
 output "vnet_id" {
   value = module.avs_hub_virtual_network.vnet_id
 }
+
+output "jump_subnet_id" {
+  value = module.avs_hub_virtual_network.subnet_ids["JumpBoxSubnet"].id
+}
+
+output "keyvault_id" {
+  value = module.avs_keyvault_with_access_policy.keyvault_id
+}

@@ -23,53 +23,50 @@ variable "key_vault_id" {
   type        = string
   description = "the resource id for the keyvault where the password will be stored"
 }
-/*
+
 variable "tf_template_github_source" {
 
 }
 variable "nsxt_root" {
-  
+
 }
 variable "t1_gateway_display_name" {
-  
+
 }
 variable "dhcp_profile_server_addresses" {
-  
+
 }
-variable "vm_segment_display_name " {
-  
+variable "vm_segment_display_name" {
+
 }
-variable "vm_segment_cidr_prefix " {
-  
+variable "vm_segment_cidr_prefix" {
+
 }
-variable "vm_segment_dhcp_range " {
-  
+variable "vm_segment_dhcp_range" {
+
 }
-variable "dhcp_profile_server_addresses" {
-  
-}
+
 variable "avs_dns_forwarder_address" {
-  
+
 }
 variable "ovf_template_url" {
-  
+
 }
 variable "nsx_ip" {
-  
+
 }
 variable "nsx_user" {
-  
+
 }
 variable "nsx_password" {
-  
+
 }
 variable "vsphere_ip" {
-  
+
 }
 variable "vsphere_user" {
-  
+
 }
-variable "vsphere_password " {
-  
+variable "vsphere_password" {
+
 }
-*/

@@ -2,16 +2,15 @@
 #generate the cloud init config file
 data "template_file" "vmware_config" {
   template = file("${path.module}/templates/vmware_cloud_init.yaml")
-/*
+
   vars = {
     tf_template_github_source     = var.tf_template_github_source
-    nsxt_root                     = var.nsx_root
+    nsxt_root                     = var.nsxt_root
     t1_gateway_display_name       = var.t1_gateway_display_name
     dhcp_profile_server_addresses = var.dhcp_profile_server_addresses
     vm_segment_display_name       = var.vm_segment_display_name
     vm_segment_cidr_prefix        = var.vm_segment_cidr_prefix
     vm_segment_dhcp_range         = var.vm_segment_dhcp_range
-    dhcp_profile_server_addresses = var.dhcp_profile_server_addresses
     avs_dns_forwarder_address     = var.avs_dns_forwarder_address
     ovf_template_url              = var.ovf_template_url
     nsx_ip                        = var.nsx_ip
@@ -21,7 +20,7 @@ data "template_file" "vmware_config" {
     vsphere_user                  = var.vsphere_user
     vsphere_password              = var.vsphere_password
   }
-*/
+
 }
 
 data "template_cloudinit_config" "config" {
