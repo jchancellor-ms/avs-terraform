@@ -53,6 +53,7 @@ write_files:
         vsphere_ip       = "${vsphere_ip}"
         vsphere_user     = "${vsphere_user}"
         vsphere_password = "${vsphere_password}"
+        vm_name          = "${vm_name}"
     }
   path: /tmp/terraform/main.tf
 runcmd:

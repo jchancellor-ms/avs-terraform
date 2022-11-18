@@ -31,4 +31,5 @@ module "avs_vmware_create_test_vm" {
   vsphere_ip                   = var.vsphere_ip
   vsphere_user                 = var.vsphere_user
   vsphere_password             = var.vsphere_password
+  vm_name                      = var.vm_name
 }
