@@ -11,6 +11,9 @@ output "firewall_policy_id" {
   value = module.avs_azure_firewall.firewall_policy_id
 }
 
+output "firewall_ip" {
+  value = module.avs_azure_firewall.firewall_private_ip_address
+}
 
 output "virtual_router_ips" {
   value = module.avs_routeserver.virtual_router_ips
@@ -36,6 +39,10 @@ output "vnet_id" {
 
 output "jump_subnet_id" {
   value = module.avs_hub_virtual_network.subnet_ids["JumpBoxSubnet"].id
+}
+
+output "gateway_subnet_id" {
+  value = module.avs_hub_virtual_network.subnet_ids["GatewaySubnet"].id
 }
 
 output "keyvault_id" {

@@ -80,6 +80,12 @@ resource "azurerm_linux_virtual_machine" "vmware_terraform_host" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
+
+  lifecycle {
+    ignore_changes = [
+      custom_data
+    ]
+  }
 }
 
 #write secret to keyvault
