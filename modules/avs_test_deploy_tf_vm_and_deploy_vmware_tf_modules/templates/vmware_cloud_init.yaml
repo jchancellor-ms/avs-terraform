@@ -35,10 +35,24 @@ write_files:
     }
 
     locals {
-        #convert the json variable objects back to a map 
-        vmware_deployment    = jsondecode(${vmware_deployment})
-        vmware_creds         = jsondecode(${vmware_creds})
-        vmware_state_storage = jsondecode(${vmware_state_storage})
+        #convert the json variable objects back to a map in two steps:
+        ###Create a temporary variable using heredoc to handle unescaped double quotes
+        vmware_deployment_heredoc = <<VDH
+            ${vmware_deployment}
+        VDH
+
+        vmware_creds_heredoc = <<VCH
+            ${vmware_creds}
+        VCH
+
+        vmware_state_storage_heredoc = <<VSSH
+            ${vmware_state_storage}
+        VSSH
+        
+        ###JSON decode the heredoc strings to return them to a map
+        vmware_deployment    = jsondecode(local.vmware_deployment_heredoc)
+        vmware_creds         = jsondecode(local.vmware_creds_heredoc)
+        vmware_state_storage = jsondecode(local.vmware_state_storage_heredoc)
     }
 
     module "deploy_vmware_vms_and_networks" {

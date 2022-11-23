@@ -30,4 +30,5 @@ vmware_deployment = {
   vsphere_datacenter       = "SDDC-Datacenter"
   vsphere_datastore        = "vsanDatastore"
   vsphere_cluster          = "Cluster-1"
+  vm_name                  = "testvmname"
 }
