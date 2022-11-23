@@ -24,7 +24,6 @@ locals {
   }
 
   #create locals for module naming 
-  role_assigment_name   = "vmware-tfstate-${random_string.namestring.result}"
   managed_identity_name = "vmware-state-access-${random_string.namestring.result}"
 
 }
@@ -78,10 +77,9 @@ resource "azurerm_user_assigned_identity" "vm_managed_identity" {
 
 #provision the managed identity of the vm to have access to the storage account
 resource "azurerm_role_assignment" "vm_managed_identity_vmware_state_storage" {
-  name               = local.role_assigment_name
   scope              = data.azurerm_storage_account.vmware_state_storage_account.id
   role_definition_id = data.azurerm_role_definition.storage_contributor.id
-  principal_id       = azurerm_user_assigned_identity.vm_managed_identity.id
+  principal_id       = azurerm_user_assigned_identity.vm_managed_identity.principal_id
 }
 
 
@@ -97,6 +95,14 @@ data "template_file" "vmware_config" {
     vmware_state_storage = jsonencode(local.vmware_state_storage)
     #deployment details
     vmware_deployment = jsonencode(var.vmware_deployment)
+    #set the state file storage details as string (can't use variables)
+    vmware_state_storage_resource_group_name = local.vmware_state_storage.resource_group_name
+    vmware_state_storage_account_name        = local.vmware_state_storage.account_name
+    vmware_state_storage_container_name      = local.vmware_state_storage.container_name
+    vmware_state_storage_key_name            = local.vmware_state_storage.key_name
+    vmware_state_storage_subscription_id     = local.vmware_state_storage.subscription_id
+    vmware_state_storage_tenant_id           = local.vmware_state_storage.tenant_id
+    vmware_state_storage_client_id           = local.vmware_state_storage.client_id
   }
 }
 
@@ -161,9 +167,13 @@ resource "azurerm_linux_virtual_machine" "vmware_terraform_host" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "22_04-LTS"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
+
+  depends_on = [
+    azurerm_role_assignment.vm_managed_identity_vmware_state_storage
+  ]
 
 }
 

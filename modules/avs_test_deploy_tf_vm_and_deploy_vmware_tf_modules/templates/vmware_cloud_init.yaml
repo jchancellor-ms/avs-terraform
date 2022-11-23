@@ -18,15 +18,15 @@ write_files:
         }
 
         backend "azurerm" {
-            resource_group_name  = "${local.vmware_state_storage.resource_group_name}"
-            storage_account_name = "${local.vmware_state_storage.account_name}"
-            container_name       = "${local.vmware_state_storage.container_name}"
-            key                  = "${local.vmware_state_storage.key_name}"
+            resource_group_name  = "${vmware_state_storage_resource_group_name}"
+            storage_account_name = "${vmware_state_storage_account_name}"
+            container_name       = "${vmware_state_storage_container_name}"
+            key                  = "${vmware_state_storage_key_name}"
 
             use_msi          = true
-            subscription_id  = "${local.vmware_state_storage.subscription_id}"
-            tenant_id        = "${local.vmware_state_storage.tenant_id}"
-            client_id        = "${local.vmware_state_storage.client_id}"
+            subscription_id  = "${vmware_state_storage_subscription_id}"
+            tenant_id        = "${vmware_state_storage_tenant_id}"
+            client_id        = "${vmware_state_storage_client_id}"
         }
     }
 
@@ -44,8 +44,8 @@ write_files:
     module "deploy_vmware_vms_and_networks" {
         source = "${tf_template_github_source}"
 
-        vmware_deployment = ${local.vmware_deployment}
-        vmware_creds      = ${local.vmware_creds}
+        vmware_deployment = local.vmware_deployment
+        vmware_creds      = local.vmware_creds
     }
   path: /tmp/terraform/main.tf
 runcmd:
