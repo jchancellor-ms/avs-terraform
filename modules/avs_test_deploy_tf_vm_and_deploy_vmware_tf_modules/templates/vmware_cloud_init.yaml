@@ -18,15 +18,15 @@ write_files:
         }
 
         backend "azurerm" {
-            resource_group_name  = "${vmware_state_storage.resource_group_name}"
-            storage_account_name = "${vmware_state_storage.account_name}"
-            container_name       = "${vmware_state_storage.container_name}"
-            key                  = "${vmware_state_storage.key_name}"
+            resource_group_name  = "${local.vmware_state_storage.resource_group_name}"
+            storage_account_name = "${local.vmware_state_storage.account_name}"
+            container_name       = "${local.vmware_state_storage.container_name}"
+            key                  = "${local.vmware_state_storage.key_name}"
 
             use_msi          = true
-            subscription_id  = "${vmware_state_storage.subscription_id}"
-            tenant_id        = "${vmware_state_storage.tenant_id}"
-            client_id        = "${vmware_state_storage.client_id}"
+            subscription_id  = "${local.vmware_state_storage.subscription_id}"
+            tenant_id        = "${local.vmware_state_storage.tenant_id}"
+            client_id        = "${local.vmware_state_storage.client_id}"
         }
     }
 
@@ -34,11 +34,18 @@ write_files:
         features {}
     }
 
+    locals {
+        #convert the json variable objects back to a map 
+        vmware_deployment    = jsondecode(${vmware_deployment})
+        vmware_creds         = jsondecode(${vmware_creds})
+        vmware_state_storage = jsondecode(${vmware_state_storage})
+    }
+
     module "deploy_vmware_vms_and_networks" {
         source = "${tf_template_github_source}"
 
-        vmware_deployment = ${vmware_deployment}
-        vmware_creds      = ${vmware_creds}
+        vmware_deployment = ${local.vmware_deployment}
+        vmware_creds      = ${local.vmware_creds}
     }
   path: /tmp/terraform/main.tf
 runcmd:

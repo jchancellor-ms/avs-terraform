@@ -41,3 +41,13 @@ variable "tf_template_github_source" {
   type        = string
   description = "the terraform module github source reference"
 }
+
+variable "sddc_name" {
+  type        = string
+  description = "the sddc where the vmware tf module will be deployed"
+}
+
+variable "sddc_rg_name" {
+  type        = string
+  description = "the resource group name of the sddc where the vmware tf module will be deployed"
+}

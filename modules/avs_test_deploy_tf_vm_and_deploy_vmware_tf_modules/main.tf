@@ -2,14 +2,14 @@ locals {
   #create the vmware nsx and vsphere credential variables
   vmware_creds = {
     nsx = {
-      ip       = split("/", data.azurerm_vmware_private_cloud.sddc_on_prem_2.nsxt_manager_endpoint)[2]
-      user     = jsondecode(data.azapi_resource_action.sddc_on_prem_2_creds.output).nsxtUsername
-      password = jsondecode(data.azapi_resource_action.sddc_on_prem_2_creds.output).nsxtPassword
+      ip       = split("/", data.azurerm_vmware_private_cloud.sddc.nsxt_manager_endpoint)[2]
+      user     = jsondecode(data.azapi_resource_action.sddc_creds.output).nsxtUsername
+      password = jsondecode(data.azapi_resource_action.sddc_creds.output).nsxtPassword
     }
     vsphere = {
-      ip       = split("/", data.azurerm_vmware_private_cloud.sddc_on_prem_2.vcsa_endpoint)[2]
-      user     = jsondecode(data.azapi_resource_action.sddc_on_prem_2_creds.output).vcenterUsername
-      password = jsondecode(data.azapi_resource_action.sddc_on_prem_2_creds.output).vcenterPassword
+      ip       = split("/", data.azurerm_vmware_private_cloud.sddc.vcsa_endpoint)[2]
+      user     = jsondecode(data.azapi_resource_action.sddc_creds.output).vcenterUsername
+      password = jsondecode(data.azapi_resource_action.sddc_creds.output).vcenterPassword
     }
   }
   #create the state storage variable map for consumption by the vmware terraform
@@ -18,7 +18,7 @@ locals {
     account_name        = var.vmware_state_storage.account_name
     container_name      = var.vmware_state_storage.container_name
     key_name            = var.vmware_state_storage.key_name
-    subscription_id     = azurerm_subscription.current.subscription_id
+    subscription_id     = data.azurerm_subscription.current.subscription_id
     tenant_id           = azurerm_user_assigned_identity.vm_managed_identity.tenant_id
     client_id           = azurerm_user_assigned_identity.vm_managed_identity.client_id
   }
@@ -26,6 +26,7 @@ locals {
   #create locals for module naming 
   role_assigment_name   = "vmware-tfstate-${random_string.namestring.result}"
   managed_identity_name = "vmware-state-access-${random_string.namestring.result}"
+
 }
 
 #create a random string for naming
@@ -83,6 +84,7 @@ resource "azurerm_role_assignment" "vm_managed_identity_vmware_state_storage" {
   principal_id       = azurerm_user_assigned_identity.vm_managed_identity.id
 }
 
+
 #generate the cloud init config file
 data "template_file" "vmware_config" {
   template = file("${path.module}/templates/vmware_cloud_init.yaml")
@@ -90,13 +92,14 @@ data "template_file" "vmware_config" {
   vars = {
     tf_template_github_source = var.tf_template_github_source
     #vmware provider details
-    vmware_creds = var.vmware_creds
+    vmware_creds = jsonencode(local.vmware_creds)
     #Azure state storage details
-    vmware_state_storage = var.vmware_state_storage
+    vmware_state_storage = jsonencode(local.vmware_state_storage)
     #deployment details
-    vmware_deployment = var.vmware_deployment
+    vmware_deployment = jsonencode(var.vmware_deployment)
   }
 }
+
 
 #base64 encode it for cloudinit
 data "template_cloudinit_config" "config" {
