@@ -52,3 +52,16 @@ resource "azurerm_vmware_express_route_authorization" "expressrouteauthkey" {
   private_cloud_id = azurerm_vmware_private_cloud.privatecloud.id
 }
 
+#deploy the hcx addon if the hcx_enabled variable is set to true
+module "hcx_addon" {
+  count  = var.hcx_enabled ? 1 : 0
+  source = "../avs_addon_hcx"
+
+  private_cloud_name           = azurerm_vmware_private_cloud.privatecloud.name
+  private_cloud_resource_group = var.rg_name
+  hcx_key_names                = var.hcx_key_names
+
+  depends_on = [
+    azurerm_vmware_private_cloud.privatecloud
+  ]
+}

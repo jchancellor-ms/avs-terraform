@@ -54,117 +54,104 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   log_analytics_workspace_id     = azurerm_log_analytics_workspace.simple.id
   log_analytics_destination_type = "AzureDiagnostics"
 
-  log {
-    category = "AzureFirewallApplicationRule"
-    enabled  = true
+  enabled_log {
+    category = "AzureFirewallApplicationRule"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AzureFirewallNetworkRule"
-    enabled  = true
+  enabled_log {
+    category = "AzureFirewallNetworkRule"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AzureFirewallDnsProxy"
-    enabled  = true
+  enabled_log {
+    category = "AzureFirewallDnsProxy"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWNetworkRule"
-    enabled  = true
+  enabled_log {
+    category = "AZFWNetworkRule"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWApplicationRule"
-    enabled  = true
+  enabled_log {
+    category = "AZFWApplicationRule"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWNatRule"
-    enabled  = true
+  enabled_log {
+    category = "AZFWNatRule"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWThreatIntel"
-    enabled  = true
+  enabled_log {
+    category = "AZFWThreatIntel"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWIdpsSignature"
-    enabled  = true
+  enabled_log {
+    category = "AZFWIdpsSignature"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWDnsQuery"
-    enabled  = true
+  enabled_log {
+    category = "AZFWDnsQuery"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWFqdnResolveFailure"
-    enabled  = true
+  enabled_log {
+    category = "AZFWFqdnResolveFailure"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWApplicationRuleAggregation"
-    enabled  = true
+  enabled_log {
+    category = "AZFWApplicationRuleAggregation"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWNetworkRuleAggregation"
-    enabled  = true
+  enabled_log {
+    category = "AZFWNetworkRuleAggregation"    
 
     retention_policy {
       enabled = false
     }
   }
 
-  log {
-    category = "AZFWNatRuleAggregation"
-    enabled  = true
+  enabled_log {
+    category = "AZFWNatRuleAggregation"    
 
     retention_policy {
       enabled = false
@@ -173,7 +160,6 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
 
   metric {
     category = "AllMetrics"
-    enabled  = true
 
     retention_policy {
       enabled = false

@@ -7,7 +7,7 @@ output "sddc_express_route_id" {
 }
 
 output "sddc_express_route_authorization_key" {
-  value = azurerm_vmware_express_route_authorization.expressrouteauthkey.express_route_authorization_key
+  value = azurerm_vmware_express_route_authorization.expressrouteauthkey[0].express_route_authorization_key
 }
 
 output "sddc_express_route_private_peering_id" {
@@ -30,7 +30,8 @@ output "sddc_provisioning_subnet_cidr" {
   value = azurerm_vmware_private_cloud.privatecloud.provisioning_subnet_cidr
 }
 
-#return the hcx keys if hcx is enabled, empty map if not
+#return the hcx keys if hcx is enabled, empty map if not.  
+#output will referenced using an index due to count on module.
 output "hcx_keys" {
   value = module.hcx_addon[*].keys
 }

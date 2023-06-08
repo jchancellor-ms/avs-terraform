@@ -1,51 +1,58 @@
-terraform {
-  required_providers {
-    azapi = {
-      source = "azure/azapi"
-    }
-  }
+#get the existing private cloud details
+data "azurerm_vmware_private_cloud" "hcx_private_cloud" {
+  name                = var.private_cloud_name
+  resource_group_name = var.private_cloud_resource_group
 }
 
-resource "azurerm_virtual_hub" "virtual_hub" {
-  name                = var.virtual_hub_name
-  resource_group_name = var.rg_name
-  location            = var.rg_location
-  sku                 = "Standard"
-  tags                = var.tags
-}
-
-resource "azurerm_public_ip" "routeserver_pip" {
-  name                = var.virtual_hub_pip_name
-  location            = var.rg_location
-  resource_group_name = var.rg_name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-  tags                = var.tags
-}
-
-resource "azurerm_virtual_hub_ip" "routeserver" {
-  name                         = var.route_server_name
-  virtual_hub_id               = azurerm_virtual_hub.virtual_hub.id
-  private_ip_allocation_method = "Dynamic"
-  public_ip_address_id         = azurerm_public_ip.routeserver_pip.id
-  subnet_id                    = var.route_server_subnet_id
-}
-
-resource "azapi_update_resource" "routeserver_branch_to_branch" {
-  type        = "Microsoft.Network/virtualHubs@2021-05-01"
-  resource_id = azurerm_virtual_hub.virtual_hub.id
-
+#deploy the hcx addon
+resource "azapi_resource" "hcx_addon" {
+  type = "Microsoft.AVS/privateClouds/addons@2021-12-01"
+  #Resource Name must match the addonType
+  name      = "HCX"
+  parent_id = data.azurerm_vmware_private_cloud.hcx_private_cloud.id
   body = jsonencode({
     properties = {
-      allowBranchToBranchTraffic = true
+      addonType = "HCX"
+      offer     = "VMware MaaS Cloud Provider"
     }
   })
 
-  depends_on = [
-    azurerm_public_ip.routeserver_pip,
-    azurerm_virtual_hub_ip.routeserver
-  ]
+  #adding lifecycle block to handle replacement issue with parent_id
+  lifecycle {
+    ignore_changes = [
+      parent_id
+    ]
+  }
 }
+
+#adding sleep wait to handle lag in hcx registration for keys
+resource "time_sleep" "wait_120_seconds" {
+  depends_on = [azapi_resource.hcx_addon]
+
+  create_duration = "120s"
+}
+
+#create the hcx key(s)
+resource "azapi_resource" "hcx_keys" {
+  for_each = toset(var.hcx_key_names)
+
+  type                   = "Microsoft.AVS/privateClouds/hcxEnterpriseSites@2022-05-01"
+  name                   = each.key
+  parent_id              = data.azurerm_vmware_private_cloud.hcx_private_cloud.id
+  response_export_values = ["*"]
+
+  depends_on = [
+    time_sleep.wait_120_seconds,
+    azapi_resource.hcx_addon
+  ]
+
+  lifecycle {
+    ignore_changes = [
+      parent_id
+    ]
+  }
+}
+
 
 #############################################################################################
 # Telemetry Section - Toggled on and off with the telemetry variable
@@ -69,7 +76,7 @@ locals {
       }
     }
     TEMPLATE
-  module_identifier                       = lower("avs_routeserver")
+  module_identifier                       = lower("avs_addon_hcx")
   telem_arm_deployment_name               = "${lower(var.guid_telemetry)}.${substr(local.module_identifier, 0, 20)}.${random_string.telemetry.result}"
 }
 
@@ -85,6 +92,6 @@ resource "azurerm_subscription_template_deployment" "telemetry_core" {
   count = var.module_telemetry_enabled ? 1 : 0
 
   name             = local.telem_arm_deployment_name
-  location         = var.rg_location
+  location         = data.azurerm_vmware_private_cloud.hcx_private_cloud.location
   template_content = local.telem_arm_subscription_template_content
 }

@@ -1,31 +1,19 @@
 #################################################################
 # module variables
 #################################################################
-variable "bastion_pip_name" {
+variable "private_cloud_name" {
   type        = string
-  description = "Azure resource name assigned to the bastion public ip"
-}
-variable "bastion_name" {
-  type        = string
-  description = "Azure resouuce name assigned to the bastion instance"
-}
-variable "rg_name" {
-  type        = string
-  description = "Resource Group Name where Bastion and the associated public ip are being deployed"
-}
-variable "rg_location" {
-  type        = string
-  description = "Resource Group location"
-  default     = "westus2"
-}
-variable "bastion_subnet_id" {
-  type        = string
-  description = "The full resource id for the subnet where the bastion will be deployed"
+  description = "name of the private cloud where the hcx addon will be enabled"
 }
 
-variable "tags" {
-  type        = map(string)
-  description = "List of the tags that will be assigned to each resource"
+variable "private_cloud_resource_group" {
+  type        = string
+  description = "name of the resource group where the private cloud is deployed"
+}
+
+variable "hcx_key_names" {
+  type        = list(string)
+  description = "list of key names to use when generating hcx site activation keys."
 }
 
 #################################################################
