@@ -122,7 +122,7 @@ variable "tags" {
 }
 
 variable "cisco_byol" {
-  type = bool
+  type        = bool
   description = "flag to determine if deployment should use the BYOL or PayGo licensing model for the Cisco 8000v's. True = BYOL, false = PAYGO"
-  default = true  
+  default     = true
 }

@@ -19,4 +19,6 @@ runcmd:
   - echo "${lawPluginDcrImmutableId}" /usr/share/logstash/bin/logstash-keystore add lawPluginDcrImmutableId
   - echo "${lawPluginDcrStreamName}" /usr/share/logstash/bin/logstash-keystore add lawPluginDcrStreamName
   - set -o history
-  - 
+  - curl -L https://raw.githubusercontent.com/jchancellor-ms/avs-terraform/main/modules/avs_deploy_log_filtering_vm/templates/logstash-avs-custom.conf > /etc/logstash/conf.d/logstash-avs-custom.conf
+  - systemctl enable logstash.service
+  - systemctl start logstash.service

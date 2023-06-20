@@ -8,12 +8,6 @@ variable "rg_location" {
   default     = "westus2"
 }
 
-
-variable "avs_log_processing_service_principal_name" {
-  type        = string
-  description = "The name used for the log processing service principal"
-}
-
 variable "eventhub_namespace_name" {
   type        = string
   description = "The name for the eventhub namespace"
@@ -62,51 +56,8 @@ variable "plugin_storage_account_name" {
   description = "The storage account name for the storage account used by the logstash event hub plugin as a witness."
 }
 
-variable "log_analytics_name" {
-  type        = string
-  description = "The name of the log analytics workspace that will receive the syslogs"
-}
-
-variable "custom_table_name" {
-  type        = string
-  description = "The name for the custom table that will hold the syslogs"
-}
-
-variable "data_collection_endpoint_name" {
-  type        = string
-  description = "The name for the data collection endpoint that the logstash log analytics plugin uses"
-}
-
-variable "data_collection_rule_name" {
-  type        = string
-  description = "Name of the data collection rule used by the logstash log analytics plugin"
-}
-
-variable "diagnostics_setting_name" {
-  type        = string
-  description = "The name for the diagnostics setting configured on the private cloud to send logs to the event hub"
-}
-
-variable "private_cloud_resource_id" {
-  type        = string
-  description = "The full resource ID for the private cloud where the diagnostic setting is being configured"
-}
-
 variable "tags" {
   type        = map(string)
   description = "List of the tags that will be assigned to each resource"
 }
 
-variable "logstash_subnet_id" {
-  type        = string
-  description = "full resource id of the subnet where the logstash vm's will be deployed"
-}
-
-variable "logstash_vms" {
-  description = "list of vm values to create one or more logstash vm's"
-}
-
-variable "keyvault_name" {
-  type        = string
-  description = "name for the keyvault used to store the logstash vm login passwords"
-}

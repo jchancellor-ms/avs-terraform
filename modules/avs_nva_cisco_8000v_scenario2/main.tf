@@ -26,16 +26,16 @@ data "template_file" "node_config" {
 resource "azurerm_marketplace_agreement" "cisco-8000v" {
   publisher = "cisco"
   offer     = "cisco-c8000v"
-  plan = local.cisco_byol
+  plan      = local.cisco_byol
 }
 
 resource "azurerm_network_interface" "node0_csr_nic0" {
-  name                 = "${var.node0_name}-nic-0"
-  location             = var.rg_location
-  resource_group_name  = var.rg_name
-  enable_ip_forwarding = true
+  name                          = "${var.node0_name}-nic-0"
+  location                      = var.rg_location
+  resource_group_name           = var.rg_name
+  enable_ip_forwarding          = true
   enable_accelerated_networking = true
-  tags                 = var.tags
+  tags                          = var.tags
 
   ip_configuration {
     name                          = "internal"
@@ -46,12 +46,12 @@ resource "azurerm_network_interface" "node0_csr_nic0" {
 }
 
 resource "azurerm_network_interface" "node0_csr_nic1" {
-  name                 = "${var.node0_name}-nic-1"
-  location             = var.rg_location
-  resource_group_name  = var.rg_name
-  enable_ip_forwarding = true
+  name                          = "${var.node0_name}-nic-1"
+  location                      = var.rg_location
+  resource_group_name           = var.rg_name
+  enable_ip_forwarding          = true
   enable_accelerated_networking = true
-  tags                 = var.tags
+  tags                          = var.tags
 
   ip_configuration {
     name                          = "internal"
@@ -89,8 +89,8 @@ resource "azurerm_linux_virtual_machine" "csr1000v_node0" {
   source_image_reference {
     publisher = "cisco"
     offer     = "cisco-c8000v"
-    sku     = local.cisco_byol
-    version = "latest"
+    sku       = local.cisco_byol
+    version   = "latest"
   }
 
   depends_on = [
@@ -105,12 +105,12 @@ resource "azurerm_linux_virtual_machine" "csr1000v_node0" {
 }
 
 resource "azurerm_network_interface" "node1_csr_nic0" {
-  name                 = "${var.node1_name}-nic-0"
-  location             = var.rg_location
-  resource_group_name  = var.rg_name
-  enable_ip_forwarding = true
+  name                          = "${var.node1_name}-nic-0"
+  location                      = var.rg_location
+  resource_group_name           = var.rg_name
+  enable_ip_forwarding          = true
   enable_accelerated_networking = true
-  tags                 = var.tags
+  tags                          = var.tags
 
   ip_configuration {
     name                          = "internal"
@@ -121,12 +121,12 @@ resource "azurerm_network_interface" "node1_csr_nic0" {
 }
 
 resource "azurerm_network_interface" "node1_csr_nic1" {
-  name                 = "${var.node1_name}-nic-1"
-  location             = var.rg_location
-  resource_group_name  = var.rg_name
-  enable_ip_forwarding = true
+  name                          = "${var.node1_name}-nic-1"
+  location                      = var.rg_location
+  resource_group_name           = var.rg_name
+  enable_ip_forwarding          = true
   enable_accelerated_networking = true
-  tags                 = var.tags
+  tags                          = var.tags
 
   ip_configuration {
     name                          = "internal"
@@ -171,8 +171,8 @@ resource "azurerm_linux_virtual_machine" "csr1000v_node1" {
   source_image_reference {
     publisher = "cisco"
     offer     = "cisco-c8000v"
-    sku     = local.cisco_byol
-    version = "latest"
+    sku       = local.cisco_byol
+    version   = "latest"
   }
   depends_on = [
     azurerm_marketplace_agreement.cisco-8000v

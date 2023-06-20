@@ -55,7 +55,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   log_analytics_destination_type = "AzureDiagnostics"
 
   enabled_log {
-    category = "AzureFirewallApplicationRule"    
+    category = "AzureFirewallApplicationRule"
 
     retention_policy {
       enabled = false
@@ -63,7 +63,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AzureFirewallNetworkRule"    
+    category = "AzureFirewallNetworkRule"
 
     retention_policy {
       enabled = false
@@ -71,7 +71,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AzureFirewallDnsProxy"    
+    category = "AzureFirewallDnsProxy"
 
     retention_policy {
       enabled = false
@@ -79,7 +79,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWNetworkRule"    
+    category = "AZFWNetworkRule"
 
     retention_policy {
       enabled = false
@@ -87,7 +87,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWApplicationRule"    
+    category = "AZFWApplicationRule"
 
     retention_policy {
       enabled = false
@@ -95,7 +95,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWNatRule"    
+    category = "AZFWNatRule"
 
     retention_policy {
       enabled = false
@@ -103,7 +103,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWThreatIntel"    
+    category = "AZFWThreatIntel"
 
     retention_policy {
       enabled = false
@@ -111,7 +111,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWIdpsSignature"    
+    category = "AZFWIdpsSignature"
 
     retention_policy {
       enabled = false
@@ -119,7 +119,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWDnsQuery"    
+    category = "AZFWDnsQuery"
 
     retention_policy {
       enabled = false
@@ -127,7 +127,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWFqdnResolveFailure"    
+    category = "AZFWFqdnResolveFailure"
 
     retention_policy {
       enabled = false
@@ -135,7 +135,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWApplicationRuleAggregation"    
+    category = "AZFWApplicationRuleAggregation"
 
     retention_policy {
       enabled = false
@@ -143,7 +143,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWNetworkRuleAggregation"    
+    category = "AZFWNetworkRuleAggregation"
 
     retention_policy {
       enabled = false
@@ -151,7 +151,7 @@ resource "azurerm_monitor_diagnostic_setting" "firewall_metrics" {
   }
 
   enabled_log {
-    category = "AZFWNatRuleAggregation"    
+    category = "AZFWNatRuleAggregation"
 
     retention_policy {
       enabled = false

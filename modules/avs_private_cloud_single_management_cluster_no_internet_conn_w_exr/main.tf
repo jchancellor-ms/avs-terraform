@@ -1,7 +1,7 @@
 locals {
   expressroute_authorization_key_name = "${var.expressroute_authorization_key_prefix}-auth-key"
-  express_route_connection_name = "${var.expressroute_authorization_key_prefix}-connection"
-  hcx_key_names = ["${var.hcx_key_prefix}-hcx-key-001","${var.hcx_key_prefix}-hcx-key-002"]
+  express_route_connection_name       = "${var.expressroute_authorization_key_prefix}-connection"
+  hcx_key_names                       = ["${var.hcx_key_prefix}-hcx-key-001", "${var.hcx_key_prefix}-hcx-key-002"]
 }
 
 
