@@ -11,9 +11,9 @@ output "event_hub_storage_account_name" {
 }
 
 output "event_hub_name" {
-    value = azurerm_eventhub.avs_log_processing.name
+  value = azurerm_eventhub.avs_log_processing.name
 }
 
 output "event_hub_authorization_rule_id" {
-    value = azurerm_eventhub_namespace_authorization_rule.avs_log_processing.id
+  value = azurerm_eventhub_namespace_authorization_rule.avs_log_processing.id
 }
