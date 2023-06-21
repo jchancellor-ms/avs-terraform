@@ -17,6 +17,6 @@ runcmd:
   - echo "${lawPluginDataCollectionEndpointURI}" | /usr/share/logstash/bin/logstash-keystore add lawplugindatacollectionendpointuri
   - echo "${lawPluginDcrImmutableId}" | /usr/share/logstash/bin/logstash-keystore add lawplugindcrimmutableid
   - echo "${lawPluginDcrStreamName}" | /usr/share/logstash/bin/logstash-keystore add lawplugindcrstreamname
-  - curl -L https://raw.githubusercontent.com/jchancellor-ms/avs-terraform/main/modules/avs_deploy_log_filtering_vm/templates/logstash-avs-custom.conf > /etc/logstash/conf.d/logstash-avs-custom.conf
+  - curl -L https://raw.githubusercontent.com/jchancellor-ms/avs-terraform/main/modules/avs_log_filtering_vm/templates/logstash-avs-custom.conf > /etc/logstash/conf.d/logstash-avs-custom.conf
   - systemctl enable logstash.service
   - systemctl start logstash.service
