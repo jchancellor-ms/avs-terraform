@@ -7,7 +7,11 @@ runcmd:
   - /usr/share/logstash/bin/logstash-plugin install logstash-input-azure_event_hubs
   - /usr/share/logstash/bin/logstash-plugin install microsoft-sentinel-logstash-output-plugin
   - mkdir /usr/share/logstash/config
-  - echo "y" | /usr/share/logstash/bin/logstash-keystore --path.settings /etc/logstash create
+  - mkdir /etc/sysconfig
+  - echo LOGSTASH_KEYSTORE_PASS=${logstashKeyStorePassword} > /etc/sysconfig/logstash
+  - chmod 600 /etc/sysconfig/logstash 
+  - export LOGSTASH_KEYSTORE_PASS=${logstashKeyStorePassword}
+  - /usr/share/logstash/bin/logstash-keystore create --path.settings /etc/logstash
   - echo "${eventHubConnectionString}" | /usr/share/logstash/bin/logstash-keystore add eventhubconnectionstring --path.settings /etc/logstash
   - echo "${eventHubConsumerGroupName}" | /usr/share/logstash/bin/logstash-keystore add eventhubconsumergroupname --path.settings /etc/logstash
   - echo "${eventHubInputStorageAccountConnectionString}" | /usr/share/logstash/bin/logstash-keystore add eventhubinputstorageaccountconnectionstring --path.settings /etc/logstash
@@ -20,5 +24,9 @@ runcmd:
   - curl -L https://raw.githubusercontent.com/jchancellor-ms/avs-terraform/main/modules/avs_log_filtering_vm/templates/logstash-avs-custom.conf > /etc/logstash/conf.d/logstash-avs-custom.conf
   - |
     sed -i -e "s/# pipeline.ecs_compatibility: v8/pipeline.ecs_compatibility: disabled/g" /etc/logstash/logstash.yml
+  - chmod 644 /etc/logstash/startup.options
+  - |
+    chown -R logstash:logstash /var/log/logstash
+  - chmod -R 755 /var/log/logstash
   - systemctl enable logstash.service
   - systemctl start logstash.service

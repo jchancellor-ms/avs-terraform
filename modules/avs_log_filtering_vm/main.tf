@@ -2,6 +2,13 @@
 ######################################################################################################################
 # Build and configure the logstash vm
 ######################################################################################################################
+resource "random_password" "keystore_password" {
+  length  = 20
+  special = false
+  upper   = true
+  lower   = true
+}
+
 
 
 #generate the cloud init config file
@@ -12,6 +19,7 @@ data "template_file" "configure_logstash" {
     eventHubConnectionString                    = var.logstash_values.eventHubConnectionString
     eventHubConsumerGroupName                   = var.logstash_values.eventHubConsumerGroupName
     eventHubInputStorageAccountConnectionString = var.logstash_values.eventHubInputStorageAccountConnectionString
+    logstashKeyStorePassword                    = random_password.keystore_password.result
     lawPluginAppId                              = var.logstash_values.lawPluginAppId
     lawPluginAppSecret                          = var.logstash_values.lawPluginAppSecret
     lawPluginTenantId                           = var.logstash_values.lawPluginTenantId
@@ -86,3 +94,9 @@ resource "azurerm_key_vault_secret" "admin_password" {
   key_vault_id = var.key_vault_id
 }
 
+#write logstash keystore secret to keyvault
+resource "azurerm_key_vault_secret" "keystore_password" {
+  name         = "${var.vm_name}-keystore-password"
+  value        = random_password.keystore_password.result
+  key_vault_id = var.key_vault_id
+}
