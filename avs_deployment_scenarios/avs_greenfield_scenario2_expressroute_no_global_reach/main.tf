@@ -10,6 +10,7 @@ locals {
   hub_virtual_hub_name              = "${var.hub_prefix}-routeserver-virtualhub-01-${random_string.namestring.result}"
   hub_virtual_hub_pip_name          = "${var.hub_prefix}-routeserver-virtualhub-pip-${random_string.namestring.result}"
   hub_route_server_name             = "${var.hub_prefix}-routeserver-01-${random_string.namestring.result}"
+  hub_gateway_route_table_name      = "${var.hub_prefix}-gateway-rt-${random_string.namestring.result}"
   bastion_pip_name                  = "${var.hub_prefix}-bastion-pip-${random_string.namestring.result}"
   bastion_name                      = "${var.hub_prefix}-bastion-${random_string.namestring.result}"
   firewall_pip_name                 = "${var.hub_prefix}-AVS-firewall-pip-${random_string.namestring.result}"
@@ -92,6 +93,45 @@ module "primary_hub_routeserver" {
   route_server_name      = local.hub_route_server_name
   route_server_subnet_id = module.primary_hub_virtual_network.subnet_ids["RouteServerSubnet"].id
   tags                   = local.tags
+}
+
+#create Gateway route table with transit hub prefixes and AVS prefixes pointing to the firewall
+#bgp route propogation disabled
+#Routes for each firewall subnet next-hop to firewall
+resource "azurerm_route_table" "gateway_rt" {
+  name                          = local.hub_gateway_route_table_name
+  location                      = azurerm_resource_group.greenfield_network_hub.location
+  resource_group_name           = azurerm_resource_group.greenfield_network_hub.name
+  disable_bgp_route_propagation = false
+  tags                          = local.tags
+}
+
+#add firewall hub routes to the route table directing traffic to the firewall (with the exception of the route server)
+resource "azurerm_route" "gateway_rt_routes" {
+  for_each               = { for subnet in var.transit_hub_subnets : subnet.name => subnet if subnet.name != "RouteServerSubnet" && subnet.name != "GatewaySubnet" }
+  name                   = each.value.name
+  resource_group_name    = azurerm_resource_group.greenfield_network_hub.name
+  route_table_name       = azurerm_route_table.gateway_rt.name
+  address_prefix         = each.value.address_prefix[0]
+  next_hop_type          = "VirtualAppliance"
+  next_hop_in_ip_address = module.avs_azure_firewall.firewall_private_ip_address
+}
+
+#add a route for the AVS prefixes
+resource "azurerm_route" "gateway-avs-routes" {
+  for_each               = { for sddc in var.avs_private_clouds : sddc.sddc_name => sddc }
+  name                   = "AVS_Management_routes-${each.value.sddc_name}"
+  resource_group_name    = azurerm_resource_group.greenfield_network_hub.name
+  route_table_name       = azurerm_route_table.gateway_rt.name
+  address_prefix         = each.value.avs_network_cidr
+  next_hop_type          = "VirtualAppliance"
+  next_hop_in_ip_address = module.avs_azure_firewall.firewall_private_ip_address
+}
+
+
+resource "azurerm_subnet_route_table_association" "hub_gateway_subnet" {
+  subnet_id      = module.primary_hub_virtual_network.subnet_ids["GatewaySubnet"].id
+  route_table_id = azurerm_route_table.gateway_rt.id
 }
 
 #deploy a keyvault for central secret management
@@ -280,6 +320,11 @@ module "create_cisco_csr8000" {
   nva_sku_size             = "Standard_D3_v2"
   onprem_avs               = true
   tags                     = local.tags
+
+  depends_on = [
+    module.primary_hub_routeserver,
+    module.transit_hub_routeserver
+  ]
 }
 
 #create BGP peerings from firewall hub route server to CSR 
@@ -330,6 +375,7 @@ resource "azurerm_virtual_network_peering" "firewall-hub-to-avs-hub" {
   resource_group_name       = azurerm_resource_group.greenfield_network_hub.name
   virtual_network_name      = module.primary_hub_virtual_network.vnet_name
   remote_virtual_network_id = module.transit_hub_virtual_network.vnet_id
+  allow_forwarded_traffic   = true
 }
 
 resource "azurerm_virtual_network_peering" "avs-hub-to-firewall-hub" {
@@ -337,6 +383,7 @@ resource "azurerm_virtual_network_peering" "avs-hub-to-firewall-hub" {
   resource_group_name       = azurerm_resource_group.transit_network_hub.name
   virtual_network_name      = module.transit_hub_virtual_network.vnet_name
   remote_virtual_network_id = module.primary_hub_virtual_network.vnet_id
+  allow_forwarded_traffic   = true
 }
 
 
@@ -380,8 +427,12 @@ module "avs_private_clouds" {
   expressroute_gateway_id               = module.transit_hub_expressroute_gateway.expressroute_gateway_id
 }
 
-
+/*
 output "csr_config" {
   value = module.create_cisco_csr8000.config_file
 }
+*/
 
+output "ars_outputs" {
+  value = module.primary_hub_routeserver.routeserver_details
+}

@@ -33,7 +33,7 @@ hub_expressroute_gateway_sku = "Standard"
 #Transit Hub values
 transit_hub_rg_location        = "canadacentral"
 transit_hub_prefix             = "AVS-Transit-Hub"
-transit_hub_vnet_address_space = ["10.200.0.0/16"]
+transit_hub_vnet_address_space = ["10.200.0.0/16", "192.168.0.0/24"]
 transit_hub_subnets = [
   {
     name           = "GatewaySubnet",
@@ -50,6 +50,10 @@ transit_hub_subnets = [
   {
     name           = "AvsFacingSubnet"
     address_prefix = ["10.200.4.0/24"]
+  },
+  {
+    name           = "BackupApplianceSubnet"
+    address_prefix = ["10.200.5.0/24"]
   }
 ]
 
